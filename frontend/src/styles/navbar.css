@@ -1,0 +1,62 @@
+:root {
+  --clr-navbar: #023047;
+  --clr-text: #F8F8F8;
+  --clr-accent: #FFB703;
+  --clr-hover: #FB8500;
+  --clr-active-border: #FB8500;
+}
+
+.navbar {
+  background-color: var(--clr-navbar);
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+.navbar .logo {
+  color: var(--clr-accent);
+  font-size: 1.5rem;
+  font-weight: bold;
+  text-decoration: none;
+}
+.navbar .nav-item {
+  color: var(--clr-text);
+  margin-left: 1.5rem;
+  text-decoration: none;
+  padding-bottom: 0.25rem;
+  transition: color .2s;
+}
+.navbar .nav-item:hover,
+.navbar .nav-item.active {
+  color: var(--clr-accent);
+  border-bottom: 2px solid var(--clr-active-border);
+}
+.navbar .cta {
+  margin-left: 2rem;
+  background-color: var(--clr-accent);
+  color: var(--clr-navbar);
+  padding: 0.5rem 1rem;
+  border-radius: 0.5rem;
+  text-decoration: none;
+  transition: background .2s, color .2s;
+}
+.navbar .cta:hover {
+  background-color: var(--clr-hover);
+  color: var(--clr-text);
+}
+
+/* Permite que los absolutely children se muestren fuera del nav */
+.navbar nav {
+  position: relative;   /* referencia para el dropdown */
+  overflow: visible;    /* evita que se recorte */
+  z-index: 10;          /* sitúa el nav por debajo del dropdown */
+}
+
+/* Wrapper para el botón de Reservar Cita */
+.dropdown-wrapper {
+  position: relative;   /* punto de anclaje para el dropdown */
+  display: inline-block;
+}
+
+/* Asegúrate de que tu botón use este wrapper */
+.dropdown-wrapper .cta {
+  position: relative;
+  z-index: 20;          /* por encima del nav */
+}
