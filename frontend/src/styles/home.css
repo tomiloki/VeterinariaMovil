@@ -1,0 +1,176 @@
+/* home.css - Warm Pet Care theme */
+:root {
+  --clr-gradient-start: #FFB703;
+  --clr-gradient-end: #FB8500;
+  --clr-text-dark: #023047;
+  --clr-btn-bg: #FFFFFF;
+  --clr-btn-hover: #e2e2e2;
+  --clr-bg-section: #F8F8F8;
+  --clr-card-bg: #FFFFFF;
+  --clr-card-shadow: rgba(0,0,0,0.1);
+  --clr-card-title: #023047;
+  --clr-card-desc: #555;
+  --clr-card-link: #FFB703;
+  --clr-card-link-hover: #FB8500;
+  --clr-footer-bg: #023047;
+  --clr-footer-text: #F8F8F8;
+  --clr-contact-input-bg: #FFFFFF;
+  --clr-contact-border: #DDD;
+  --clr-contact-btn: #FFB703;
+  --clr-contact-btn-hover: #FB8500;
+}
+
+.home-page {
+  background-color: var(--clr-bg-section);
+}
+
+/* Hero */
+.hero {
+  background: linear-gradient(90deg, var(--clr-gradient-start), var(--clr-gradient-end));
+  min-height: 70vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.hero .content {
+  text-align: center;
+  color: var(--clr-text-dark);
+  padding: 4rem 1rem;
+}
+.hero .title {
+  font-size: 3rem;
+  font-weight: 800;
+  margin-bottom: 1rem;
+}
+.hero .subtitle {
+  font-size: 1.25rem;
+  margin-bottom: 2rem;
+}
+.hero .btn {
+  background-color: var(--clr-btn-bg);
+  color: var(--clr-text-dark);
+  padding: 0.75rem 2rem;
+  border-radius: 9999px;
+  font-weight: 600;
+  text-decoration: none;
+  transition: background .2s;
+}
+.hero .btn:hover {
+  background-color: var(--clr-btn-hover);
+}
+
+/* Services Section */
+.services-section {
+  background-color: var(--clr-bg-section);
+}
+.section-title {
+  color: var(--clr-text-dark);
+  font-size: 2rem;
+  font-weight: 700;
+  margin-bottom: 1rem;
+}
+.service-card {
+  background-color: var(--clr-card-bg);
+  box-shadow: 0 2px 8px var(--clr-card-shadow);
+  padding: 1.5rem;
+  border-radius: 0.75rem;
+  text-align: center;
+}
+.icon-wrapper {
+  height: 4rem;
+  width: 4rem;
+  margin: 0 auto 1rem;
+  background-color: var(--clr-btn-bg);
+  border-radius: 9999px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.icon {
+  font-size: 1.5rem;
+  color: var(--clr-card-link);
+}
+.card-title {
+  color: var(--clr-card-title);
+  font-size: 1.25rem;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+}
+.card-desc {
+  color: var(--clr-card-desc);
+  margin-bottom: 0.75rem;
+}
+.card-link {
+  color: var(--clr-card-link);
+  text-decoration: none;
+  font-weight: 500;
+}
+.card-link:hover {
+  color: var(--clr-card-link-hover);
+}
+
+/* About Section */
+.about-section {
+  background-color: var(--clr-card-bg);
+  padding: 4rem 1rem;
+}
+.about-text {
+  color: var(--clr-card-desc);
+  max-width: 40rem;
+  margin: 0 auto;
+  text-align: center;
+  line-height: 1.6;
+}
+
+/* Contact Section */
+.contact-section {
+  background-color: var(--clr-bg-section);
+  padding: 4rem 1rem;
+}
+.contact-info {
+  margin-bottom: 2rem;
+}
+.contact-text {
+  color: var(--clr-card-desc);
+  margin-bottom: 1rem;
+}
+.contact-list li {
+  color: var(--clr-card-desc);
+  margin-bottom: 0.5rem;
+}
+.form-fields {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+.form-input,
+.form-textarea {
+  background-color: var(--clr-contact-input-bg);
+  border: 1px solid var(--clr-contact-border);
+  padding: 0.75rem;
+  border-radius: 0.5rem;
+  width: 100%;
+}
+.form-btn {
+  background-color: var(--clr-contact-btn);
+  color: var(--clr-footer-text);
+  padding: 0.75rem;
+  border: none;
+  border-radius: 0.5rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background .2s;
+}
+.form-btn:hover {
+  background-color: var(--clr-contact-btn-hover);
+}
+
+/* Footer */
+.footer-section {
+  background-color: var(--clr-footer-bg);
+  color: var(--clr-footer-text);
+  padding: 2rem 1rem;
+}
+.footer-section p {
+  margin: 0;
+}

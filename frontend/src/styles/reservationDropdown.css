@@ -1,0 +1,23 @@
+.reservation-dropdown {
+  position: absolute;
+  top: calc(100% + 0.25rem); /* justo debajo del botón */
+  left: 50%;                 /* punto medio del wrapper */
+  transform: translateX(-50%); /* centra el dropdown */
+  background-color: #FFFFFF;
+  border: 1px solid #DDD;
+  border-radius: 0.5rem;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  width: 180px;              /* ajusta si quieres */
+  z-index: 50;
+}
+
+.dropdown-item {
+  display: block;
+  padding: 0.75rem 1rem;
+  color: #023047;
+  text-decoration: none;
+  transition: background 0.2s;
+}
+.dropdown-item:hover {
+  background-color: #F8F8F8;
+}

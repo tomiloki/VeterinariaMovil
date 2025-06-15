@@ -1,0 +1,112 @@
+/* reservaCitaForm.css - Warm Pet Care theme */
+:root {
+  --clr-form-bg: #FFFFFF;
+  --clr-form-card-shadow: rgba(0,0,0,0.1);
+  --clr-label: #023047;
+  --clr-input-bg: #F8F8F8;
+  --clr-input-border: #DDD;
+  --clr-btn-primary: #FFB703;
+  --clr-btn-primary-hover: #FB8500;
+  --clr-btn-text: #023047;
+  --clr-placeholder: #888;
+  --clr-bg-section: #F8F8F8;
+}
+
+/* Container */
+.reserva-container {
+  background-color: var(--clr-bg-section);
+  padding: 2rem 1rem;
+  display: flex;
+  justify-content: center;
+}
+
+/* Card */
+.reserva-card {
+  background-color: var(--clr-form-bg);
+  box-shadow: 0 2px 8px var(--clr-form-card-shadow);
+  border-radius: 0.75rem;
+  padding: 2rem;
+  max-width: 600px;
+  width: 100%;
+}
+
+/* Title */
+.reserva-title {
+  font-size: 1.75rem;
+  font-weight: 700;
+  color: var(--clr-label);
+  margin-bottom: 1.5rem;
+  text-align: center;
+}
+
+/* Message */
+.reserva-message {
+  text-align: center;
+  margin-bottom: 1rem;
+  color: var(--clr-btn-primary);
+}
+
+/* Form Groups */
+.reserva-form .form-group {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 1rem;
+}
+
+.reserva-form label {
+  color: var(--clr-label);
+  font-weight: 500;
+  margin-bottom: 0.5rem;
+}
+
+/* Inputs, Selects, Textareas */
+.reserva-form input,
+.reserva-form select,
+.reserva-form textarea {
+  background-color: var(--clr-input-bg);
+  border: 1px solid var(--clr-input-border);
+  border-radius: 0.5rem;
+  padding: 0.75rem;
+  font-size: 1rem;
+  color: var(--clr-label);
+}
+
+/* Placeholder styling */
+.reserva-form input::placeholder,
+.reserva-form textarea::placeholder {
+  color: var(--clr-placeholder);
+  opacity: 1;
+}
+
+/* DateTime-local mask visible */
+.reserva-form input[type="datetime-local"] {
+  color: var(--clr-placeholder);
+}
+
+/* DateTime-local focus text color */
+.reserva-form input[type="datetime-local"]:focus {
+  color: var(--clr-label);
+}
+
+/* Calendar icon visibility */
+.reserva-form input[type="datetime-local"]::-webkit-calendar-picker-indicator {
+  filter: invert(40%);
+}
+
+/* Button */
+.reserva-form button {
+  margin-top: 1rem;
+  background-color: var(--clr-btn-primary);
+  color: var(--clr-btn-text);
+  padding: 0.75rem;
+  border: none;
+  border-radius: 0.5rem;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.reserva-form button:hover {
+  background-color: var(--clr-btn-primary-hover);
+}
