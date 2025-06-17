@@ -1,30 +1,36 @@
 # backend/mascota_feliz/serializers.py
 
 from rest_framework import serializers
-from .models import Cliente, Mascota, Cita, Medicamento, RutaMovil, Usuario
+from .models import Mascota, Cita, Medicamento, RutaMovil, Orden, OrdenItem, Usuario
 
-class ClienteSerializer(serializers.ModelSerializer):
+class UsuarioSerializer(serializers.ModelSerializer):
     class Meta:
-        model = Cliente
-        fields = '_all_'
-
+        model = Usuario
+        fields = ['id', 'username', 'email', 'rol', 'password']
+        extra_kwargs = {
+            'password': {'write_only': True}
+        }
 
 class MascotaSerializer(serializers.ModelSerializer):
-    # Serializamos anidado para lectura y usamos cliente_id para escritura
-    cliente = ClienteSerializer(read_only=True)
-    cliente_id = serializers.PrimaryKeyRelatedField(
-        queryset=Cliente.objects.all(),
-        source='cliente',
+    usuario = UsuarioSerializer(read_only=True)
+    usuario_id = serializers.PrimaryKeyRelatedField(
+        queryset=Usuario.objects.all(),
+        source='usuario',
         write_only=True
     )
 
     class Meta:
         model = Mascota
         fields = [
-            'id', 'nombre', 'especie', 'raza',
-            'edad', 'peso', 'cliente', 'cliente_id'
+            'id',
+            'nombre',
+            'especie',
+            'raza',
+            'edad',
+            'peso',
+            'usuario',     # <-- campo para lectura
+            'usuario_id'   # <-- campo para asignar al crear
         ]
-
 
 class CitaSerializer(serializers.ModelSerializer):
     class Meta:
@@ -33,6 +39,7 @@ class CitaSerializer(serializers.ModelSerializer):
             'id',
             'fecha',
             'tipo',
+            'subservicio',
             'mascota',
             'motivo',
             'direccion',     # ← añade esto
@@ -51,23 +58,10 @@ class MedicamentoSerializer(serializers.ModelSerializer):
         model = Medicamento
         fields = '_all_'
 
-
 class RutaMovilSerializer(serializers.ModelSerializer):
     class Meta:
         model = RutaMovil
         fields = '_all_'
-
-
-class UsuarioSerializer(serializers.ModelSerializer):
-    # No exponer la contraseña en las respuestas
-    extra_kwargs = {'password': {'write_only': True}}
-
-    class Meta:
-        model = Usuario
-        fields = ['id', 'username', 'email', 'rol', 'password']
-        extra_kwargs = {
-            'password': {'write_only': True}
-        }
 
     def create(self, validated_data):
         user = Usuario(
@@ -77,4 +71,55 @@ class UsuarioSerializer(serializers.ModelSerializer):
         )
         user.set_password(validated_data['password'])
         user.save()
+        return user
+    
+class OrdenItemSerializer(serializers.ModelSerializer):
+    medicamento = MedicamentoSerializer(read_only=True)
+    medicamento_id = serializers.PrimaryKeyRelatedField(
+        queryset=Medicamento.objects.all(), source='medicamento', write_only=True
+    )
+    class Meta:
+        model = OrdenItem
+        fields = ['id', 'medicamento', 'medicamento_id', 'cantidad', 'subtotal']
+
+class OrdenSerializer(serializers.ModelSerializer):
+    items = OrdenItemSerializer(source='ordenitem_set', many=True)
+    class Meta:
+        model = Orden
+        fields = ['id', 'cliente', 'fecha', 'items', 'total']
+
+    def create(self, validated_data):
+        items_data = validated_data.pop('ordenitem_set')
+        orden = Orden.objects.create(**validated_data)
+        total = 0
+        for item_data in items_data:
+            medicamento = item_data['medicamento']
+            cantidad = item_data['cantidad']
+            subtotal = medicamento.precio * cantidad
+            OrdenItem.objects.create(
+                orden=orden, medicamento=medicamento, cantidad=cantidad, subtotal=subtotal
+            )
+            total += subtotal
+        orden.total = total
+        orden.save()
+        return orden
+    
+class UsuarioRegistroSerializer(serializers.ModelSerializer):
+    password = serializers.CharField(write_only=True)
+    class Meta:
+        model = Usuario
+        fields = ['username', 'password', 'nombre', 'rut', 'correo', 'telefono', 'direccion', 'rol']
+        extra_kwargs = {'rol': {'read_only': True}}
+
+    def create(self, validated_data):
+        user = Usuario.objects.create_user(
+            username=validated_data['username'],
+            password=validated_data['password'],
+            nombre=validated_data['nombre'],
+            rut=validated_data['rut'],
+            correo=validated_data['correo'],
+            telefono=validated_data['telefono'],
+            direccion=validated_data['direccion'],
+            rol='cliente'
+        )
         return user

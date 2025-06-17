@@ -1,23 +1,35 @@
+/* src/styles/reservationDropdown.css */
 .reservation-dropdown {
   position: absolute;
-  top: calc(100% + 0.25rem); /* justo debajo del botón */
-  left: 50%;                 /* punto medio del wrapper */
-  transform: translateX(-50%); /* centra el dropdown */
-  background-color: #FFFFFF;
-  border: 1px solid #DDD;
-  border-radius: 0.5rem;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-  width: 180px;              /* ajusta si quieres */
+  top: calc(100% + 0.5rem);
+  left: 50%;
+  transform: translateX(-50%);
+  background: #fff;
+  border-radius: 0.6rem;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.08);
+  width: 200px;
   z-index: 50;
 }
 
 .dropdown-item {
-  display: block;
+  width: 100%;
   padding: 0.75rem 1rem;
-  color: #023047;
-  text-decoration: none;
-  transition: background 0.2s;
+  background: transparent;
+  border: none;
+  text-align: left;
+  font-size: 1rem;
+  color: var(--clr-text-dark);
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  transition: background 0.2s, color 0.2s;
+  cursor: pointer;
 }
 .dropdown-item:hover {
-  background-color: #F8F8F8;
+  background: var(--clr-gradient-end);
+  color: #fff;
+}
+.dropdown-item.active {
+  background: var(--clr-gradient-start);
+  color: #fff;
 }

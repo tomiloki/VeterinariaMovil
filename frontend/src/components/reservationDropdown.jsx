@@ -1,24 +1,29 @@
+// src/components/ReservationDropdown.jsx
 import React from 'react';
-import { NavLink } from 'react-router-dom';
+import PropTypes from 'prop-types';
 import '../styles/reservationDropdown.css';
 
-export default function ReservationDropdown({ onClose }) {
+export default function ReservationDropdown({ active, onSelect, onClose }) {
   return (
     <div className="reservation-dropdown">
-      <NavLink
-        to="/reservar?tipo=presencial"
-        className="dropdown-item"
-        onClick={onClose}
+      <button
+        className={`dropdown-item ${active === 'presencial' ? 'active' : ''}`}
+        onClick={() => { onSelect('presencial'); onClose(); }}
       >
-        Presencial
-      </NavLink>
-      <NavLink
-        to="/reservar?tipo=movil"
-        className="dropdown-item"
-        onClick={onClose}
+        🏥 Presencial
+      </button>
+      <button
+        className={`dropdown-item ${active === 'movil' ? 'active' : ''}`}
+        onClick={() => { onSelect('movil'); onClose(); }}
       >
-        Móvil a domicilio
-      </NavLink>
+        🚐 Veterinaria Móvil
+      </button>
     </div>
   );
 }
+
+ReservationDropdown.propTypes = {
+  active:  PropTypes.string.isRequired,
+  onSelect: PropTypes.func.isRequired,
+  onClose: PropTypes.func.isRequired,
+};

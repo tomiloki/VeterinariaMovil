@@ -1,112 +1,127 @@
-/* reservaCitaForm.css - Warm Pet Care theme */
-:root {
-  --clr-form-bg: #FFFFFF;
-  --clr-form-card-shadow: rgba(0,0,0,0.1);
-  --clr-label: #023047;
-  --clr-input-bg: #F8F8F8;
-  --clr-input-border: #DDD;
-  --clr-btn-primary: #FFB703;
-  --clr-btn-primary-hover: #FB8500;
-  --clr-btn-text: #023047;
-  --clr-placeholder: #888;
-  --clr-bg-section: #F8F8F8;
-}
-
-/* Container */
-.reserva-container {
-  background-color: var(--clr-bg-section);
-  padding: 2rem 1rem;
-  display: flex;
+/* frontend/src/styles/reservaCitaForm.css */
+.reserva-page {                                /* envolver el form con este div */
+  min-height: 100vh;                           /* ocupa toda la pantalla */
+  padding: 2rem 0;                             /* separación arriba/abajo */
+  display: flex;                               /* centra el form */
+  align-items: center;
   justify-content: center;
+  background: linear-gradient(90deg, #ffb703 60%, #fb8500 100%);  /* fondo warm */
 }
 
-/* Card */
-.reserva-card {
-  background-color: var(--clr-form-bg);
-  box-shadow: 0 2px 8px var(--clr-form-card-shadow);
-  border-radius: 0.75rem;
+.reserva-form {
+  background: #fff;
   padding: 2rem;
-  max-width: 600px;
-  width: 100%;
+  border-radius: 0.8rem;
+  box-shadow: 0 4px 20px rgba(2,48,71,0.07);
+  max-width: 480px;
+  margin: 1rem auto;
 }
 
-/* Title */
-.reserva-title {
-  font-size: 1.75rem;
-  font-weight: 700;
-  color: var(--clr-label);
+.reserva-form h2 {
   margin-bottom: 1.5rem;
+  color: #023047;
+  font-size: 1.6rem;
   text-align: center;
 }
 
-/* Message */
-.reserva-message {
-  text-align: center;
-  margin-bottom: 1rem;
-  color: var(--clr-btn-primary);
-}
-
-/* Form Groups */
-.reserva-form .form-group {
+.field-group {
+  margin-bottom: 1.25rem;
   display: flex;
   flex-direction: column;
-  margin-bottom: 1rem;
 }
-
-.reserva-form label {
-  color: var(--clr-label);
-  font-weight: 500;
+.field-group label {
   margin-bottom: 0.5rem;
-}
-
-/* Inputs, Selects, Textareas */
-.reserva-form input,
-.reserva-form select,
-.reserva-form textarea {
-  background-color: var(--clr-input-bg);
-  border: 1px solid var(--clr-input-border);
-  border-radius: 0.5rem;
-  padding: 0.75rem;
-  font-size: 1rem;
-  color: var(--clr-label);
-}
-
-/* Placeholder styling */
-.reserva-form input::placeholder,
-.reserva-form textarea::placeholder {
-  color: var(--clr-placeholder);
-  opacity: 1;
-}
-
-/* DateTime-local mask visible */
-.reserva-form input[type="datetime-local"] {
-  color: var(--clr-placeholder);
-}
-
-/* DateTime-local focus text color */
-.reserva-form input[type="datetime-local"]:focus {
-  color: var(--clr-label);
-}
-
-/* Calendar icon visibility */
-.reserva-form input[type="datetime-local"]::-webkit-calendar-picker-indicator {
-  filter: invert(40%);
-}
-
-/* Button */
-.reserva-form button {
-  margin-top: 1rem;
-  background-color: var(--clr-btn-primary);
-  color: var(--clr-btn-text);
-  padding: 0.75rem;
-  border: none;
-  border-radius: 0.5rem;
-  font-size: 1rem;
   font-weight: 600;
-  cursor: pointer;
-  transition: background 0.2s;
+  color: #023047;
+}
+.field-group input,
+.field-group select,
+.field-group textarea {
+  padding: 0.65rem 0.9rem;
+  border: 1.5px solid #ffb703;
+  border-radius: 0.5rem;
+  font-size: 1rem;
+  transition: border-color 0.2s, background 0.2s;
+  color: #6b7280;
+  background: #fff;          
+}
+.field-group input:focus,
+.field-group select:focus,
+.field-group textarea:focus {
+  outline: none;
+  border-color: #fb8500;
+  background: #fff8e1;
+  color: #1f2937
 }
 
-.reserva-form button:hover {
-  background-color: var(--clr-btn-primary-hover);
+.input-error {
+  border-color: #e63946 !important;
+  background: #fff1f1;
+}
+
+.error-text {
+  color: #e63946;
+  font-size: 0.875rem;
+  margin-top: 0.3rem;
+}
+
+.reserva-btn {
+  width: 100%;
+  padding: 0.75rem;
+  background: linear-gradient(90deg, #ffb703 60%, #fb8500 100%);
+  color: #023047;
+  font-weight: bold;
+  border: none;
+  border-radius: 1rem;
+  font-size: 1.1rem;
+  cursor: pointer;
+  transition: background 0.18s, color 0.18s;
+  box-shadow: 0 2px 12px rgba(251,133,0,0.3);
+}
+.reserva-btn:hover {
+  background: linear-gradient(90deg, #fb8500 40%, #ffb703 100%);
+  color: #fff;
+}
+
+/* 1. Radio tipo de cita */
+.tipo-group .radio-group {
+  display: flex;
+  gap: 1.5rem;
+  margin-top: 0.5rem;
+}
+.tipo-group .radio-group label {
+  font-weight: 600;
+  color: #023047;
+}
+.tipo-group input[type="radio"] {
+  margin-right: 0.4rem;
+}
+
+/* 2. Dirección de usuario (movil) */
+.user-address {
+  padding: 0.6rem 0.9rem;
+  background: #f0f0f0;
+  border-radius: 0.5rem;
+  color: #023047;
+  font-style: italic;
+}
+
+/* 3. Detalle dinámico */
+.detail-group {
+  background: #fff8e1;      /* suave warm */
+  padding: 1rem;
+  border-radius: 0.6rem;
+  margin: 1rem 0;
+  color: #023047;
+}
+.detail-group h3 {
+  margin-bottom: 0.6rem;
+  color: #023047;
+}
+.detail-group ul {
+  list-style: none;
+  padding-left: 0;
+}
+.detail-group li {
+  margin-bottom: 0.3rem;
 }

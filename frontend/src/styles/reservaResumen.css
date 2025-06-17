@@ -1,0 +1,90 @@
+/* frontend/src/styles/reservaResumen.css */
+
+/* Contenedor de toda la página */
+.resumen-page {
+  min-height: 100vh;
+  padding: 2rem 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(90deg, #ffb703 60%, #fb8500 100%);
+}
+
+/* Tarjeta que agrupa el resumen */
+.resumen-card {
+  background: #fff;
+  padding: 2rem;
+  border-radius: 0.8rem;
+  box-shadow: 0 4px 24px rgba(2, 48, 71, 0.1);
+  max-width: 500px;
+  width: 90%;
+}
+
+.resumen-card h2 {
+  margin-bottom: 1.5rem;
+  color: #023047;
+  font-size: 1.8rem;
+  text-align: center;
+}
+
+.resumen-card ul {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 1.5rem;
+}
+
+.resumen-card li {
+  margin-bottom: 0.75rem;
+  font-size: 1rem;
+  color: #1f2937;
+}
+
+/* Mensaje de error inline */
+.error-text {
+  color: #e63946;
+  font-size: 0.9rem;
+  margin-bottom: 1rem;
+  text-align: center;
+}
+
+/* Contenedor de botones */
+.resumen-buttons {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+/* Botones generales */
+.resumen-buttons button {
+  flex: 1;
+  padding: 0.75rem 1rem;
+  font-size: 1rem;
+  font-weight: 600;
+  border: 1.5px solid transparent;
+  border-radius: 0.6rem;
+  cursor: pointer;
+  transition: background 0.2s, color 0.2s;
+}
+
+/* Botón “Volver” */
+.resumen-buttons button:not(.btn-confirm) {
+  background: #fff;
+  color: #023047;
+  border-color: #ffb703;
+}
+.resumen-buttons button:not(.btn-confirm):hover {
+  background: #ffb703;
+  color: #fff;
+}
+
+/* Botón “Confirmar” */
+.btn-confirm {
+  background: linear-gradient(90deg, #ffb703 60%, #fb8500 100%);
+  color: #023047;
+  border: none;
+  box-shadow: 0 2px 12px rgba(251, 133, 0, 0.3);
+}
+.btn-confirm:hover {
+  background: linear-gradient(90deg, #fb8500 40%, #ffb703 100%);
+  color: #fff;
+}

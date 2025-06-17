@@ -17,20 +17,32 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include
 from rest_framework.routers import DefaultRouter
+from rest_framework_simplejwt.views import (
+    TokenObtainPairView,
+    TokenRefreshView,
+    TokenRefreshView,
+)
+from .views import UsuarioPerfilView, RegistroUsuarioView
 from mascota_feliz.views import (
-    ClienteViewSet, MascotaViewSet, CitaViewSet,
-    MedicamentoViewSet, RutaMovilViewSet, UsuarioViewSet
+    MascotaViewSet, CitaViewSet,
+    MedicamentoViewSet, RutaMovilViewSet, UsuarioViewSet,
+    OrdenViewSet
+
 )
 
 router = DefaultRouter()
-router.register(r'clientes', ClienteViewSet)
 router.register(r'mascotas', MascotaViewSet)
 router.register(r'citas', CitaViewSet)
 router.register(r'medicamentos', MedicamentoViewSet)
 router.register(r'rutas-movil', RutaMovilViewSet, basename='rutasmovil')
 router.register(r'usuarios', UsuarioViewSet)
+router.register(r'ordenes', OrdenViewSet)
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/', include(router.urls)),
+    path('api/login/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
+    path('api/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
+    path('api/miusuario/', UsuarioPerfilView.as_view(), name='miusuario'),
+    path('api/register/', RegistroUsuarioView.as_view(), name='registro_usuario'),
 ]

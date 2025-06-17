@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import { NavLink, useLocation } from 'react-router-dom';
-import ReservationDropdown from '../components/reservationDropdown';
+import { NavLink, useLocation, useNavigate } from 'react-router-dom';
+import ReservationDropdown from '../components/ReservationDropdown';
 import '../styles/home.css';
 
 export default function Home() {
   const [open, setOpen] = useState(false);
   const { hash } = useLocation();
+  const navigate = useNavigate();
 
   useEffect(() => {
     if (hash) {
@@ -16,6 +17,10 @@ export default function Home() {
 
   const toggleDropdown = () => setOpen(prev => !prev);
 
+  const handleTipoSelect = tipo => {
+    navigate(`/reservar?tipo=${tipo}`);
+  };
+
   return (
     <div className="home-page">
       {/* Hero Section */}
@@ -25,7 +30,12 @@ export default function Home() {
           <p className="subtitle">Cuidamos a tu mejor amigo con pasión y profesionalismo.</p>
           <div className="reservation-wrapper" style={{ position: 'relative', display: 'inline-block' }}>
             <button className="btn" onClick={toggleDropdown}>Reserva una Cita Ahora</button>
-            {open && <ReservationDropdown onClose={() => setOpen(false)} />}
+            {open && (
+              <ReservationDropdown
+                onSelect={handleTipoSelect}
+                onClose={() => setOpen(false)}
+              />
+            )}
           </div>
         </div>
       </section>
