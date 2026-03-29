@@ -1,125 +1,136 @@
-# backend/mascota_feliz/serializers.py
-
 from rest_framework import serializers
-from .models import Mascota, Cita, Medicamento, RutaMovil, Orden, OrdenItem, Usuario
+from django.db import transaction
+from django.utils import timezone
+from .models import Usuario, Mascota, Cita, Medicamento, RutaMovil, Orden, OrdenItem, RoleChoices
 
 class UsuarioSerializer(serializers.ModelSerializer):
+    password = serializers.CharField(write_only=True, required=False)
+    email = serializers.EmailField(read_only=True)
+    rol = serializers.CharField(read_only=True)
+
     class Meta:
         model = Usuario
-        fields = ['id', 'username', 'email', 'rol', 'password']
-        extra_kwargs = {
-            'password': {'write_only': True}
-        }
+        fields = ['id', 'username', 'password', 'email', 'rol', 'nombre', 'rut', 'direccion', 'telefono']
+
+    def create(self, validated_data):
+        password = validated_data.pop('password', None)
+        user = Usuario(**validated_data)
+        if password:
+            user.set_password(password)
+        else:
+            user.set_unusable_password()
+        user.save()
+        return user
+
+    def update(self, instance, validated_data):
+        password = validated_data.pop('password', None)
+        for attr, value in validated_data.items():
+            setattr(instance, attr, value)
+        if password:
+            instance.set_password(password)
+        instance.save()
+        return instance
 
 class MascotaSerializer(serializers.ModelSerializer):
-    usuario = UsuarioSerializer(read_only=True)
-    usuario_id = serializers.PrimaryKeyRelatedField(
-        queryset=Usuario.objects.all(),
-        source='usuario',
-        write_only=True
-    )
+    usuario = serializers.PrimaryKeyRelatedField(read_only=True)
 
     class Meta:
         model = Mascota
-        fields = [
-            'id',
-            'nombre',
-            'especie',
-            'raza',
-            'edad',
-            'peso',
-            'usuario',     # <-- campo para lectura
-            'usuario_id'   # <-- campo para asignar al crear
-        ]
+        fields = ['id', 'nombre', 'especie', 'raza', 'edad', 'peso', 'usuario']
+
+    def validate(self, data):
+        request = self.context.get('request')
+        user = getattr(request, 'user', None)
+        # Permitir modificaciones al dueño, al staff y a veterinarios
+        if self.instance and user:
+            if self.instance.usuario != user and not (user.is_staff or user.rol == RoleChoices.VETERINARIO):
+                raise serializers.ValidationError("No tienes permiso para modificar esta mascota.")
+        return data
+
+    def create(self, validated_data):
+        user = self.context['request'].user
+        return Mascota.objects.create(usuario=user, **validated_data)
 
 class CitaSerializer(serializers.ModelSerializer):
     class Meta:
         model = Cita
-        fields = [
-            'id',
-            'fecha',
-            'tipo',
-            'subservicio',
-            'mascota',
-            'motivo',
-            'direccion',     # ← añade esto
-            'atendida',
-        ]
+        fields = '__all__'
 
-        def validate(self, data):
-            if data.get('tipo') == 'movil' and not data.get('direccion'):
-                raise serializers.ValidationError({
-                    'direccion': 'La dirección es obligatoria para citas móviles.'
-                })
-            return data
+    def validate(self, data):
+        tipo = data.get('tipo')
+        direccion = data.get('direccion')
+        if tipo == Cita.TipoCita.MOVIL and not direccion:
+            raise serializers.ValidationError("La dirección es obligatoria para citas móviles.")
+        return data
+
+    def validate_fecha(self, value):
+        if value < timezone.now():
+            raise serializers.ValidationError("La fecha no puede estar en el pasado.")
+        return value
 
 class MedicamentoSerializer(serializers.ModelSerializer):
     class Meta:
         model = Medicamento
-        fields = '_all_'
+        fields = '__all__'
 
 class RutaMovilSerializer(serializers.ModelSerializer):
     class Meta:
         model = RutaMovil
-        fields = '_all_'
+        fields = '__all__'
 
-    def create(self, validated_data):
-        user = Usuario(
-            username=validated_data['username'],
-            email=validated_data.get('email', ''),
-            rol=validated_data.get('rol', 'cliente')
-        )
-        user.set_password(validated_data['password'])
-        user.save()
-        return user
-    
 class OrdenItemSerializer(serializers.ModelSerializer):
-    medicamento = MedicamentoSerializer(read_only=True)
-    medicamento_id = serializers.PrimaryKeyRelatedField(
-        queryset=Medicamento.objects.all(), source='medicamento', write_only=True
-    )
+    subtotal = serializers.DecimalField(max_digits=10, decimal_places=2, read_only=True)
+
     class Meta:
         model = OrdenItem
-        fields = ['id', 'medicamento', 'medicamento_id', 'cantidad', 'subtotal']
+        fields = ['id', 'medicamento', 'cantidad', 'subtotal']
 
 class OrdenSerializer(serializers.ModelSerializer):
     items = OrdenItemSerializer(source='ordenitem_set', many=True)
+
     class Meta:
         model = Orden
-        fields = ['id', 'cliente', 'fecha', 'items', 'total']
+        fields = ['id', 'usuario', 'fecha', 'items', 'total']
+        read_only_fields = ['usuario', 'fecha', 'total']
 
     def create(self, validated_data):
         items_data = validated_data.pop('ordenitem_set')
-        orden = Orden.objects.create(**validated_data)
-        total = 0
-        for item_data in items_data:
-            medicamento = item_data['medicamento']
-            cantidad = item_data['cantidad']
-            subtotal = medicamento.precio * cantidad
-            OrdenItem.objects.create(
-                orden=orden, medicamento=medicamento, cantidad=cantidad, subtotal=subtotal
-            )
-            total += subtotal
-        orden.total = total
-        orden.save()
+        user = self.context['request'].user
+        with transaction.atomic():
+            orden = Orden.objects.create(usuario=user, total=0, **validated_data)
+            total = 0
+            for item in items_data:
+                medicamento = item['medicamento']
+                cantidad = item['cantidad']
+                subtotal = medicamento.precio * cantidad
+                OrdenItem.objects.create(orden=orden, medicamento=medicamento, cantidad=cantidad, subtotal=subtotal)
+                total += subtotal
+            orden.total = total
+            orden.save()
         return orden
-    
+
 class UsuarioRegistroSerializer(serializers.ModelSerializer):
     password = serializers.CharField(write_only=True)
+    email = serializers.EmailField(required=True)
+    rol = serializers.CharField(required=False, allow_blank=True)
+
     class Meta:
         model = Usuario
-        fields = ['username', 'password', 'nombre', 'rut', 'correo', 'telefono', 'direccion', 'rol']
-        extra_kwargs = {'rol': {'read_only': True}}
+        fields = ['username', 'password', 'email', 'rol', 'nombre', 'rut', 'direccion', 'telefono']
 
     def create(self, validated_data):
         user = Usuario.objects.create_user(
             username=validated_data['username'],
+            email=validated_data['email'],
             password=validated_data['password'],
-            nombre=validated_data['nombre'],
-            rut=validated_data['rut'],
-            correo=validated_data['correo'],
-            telefono=validated_data['telefono'],
-            direccion=validated_data['direccion'],
-            rol='cliente'
+            rol=validated_data.get('rol', RoleChoices.CLIENTE),
+            nombre=validated_data.get('nombre', ''),
+            rut=validated_data.get('rut', ''),
+            direccion=validated_data.get('direccion', ''),
+            telefono=validated_data.get('telefono', '')
         )
         return user
+
+
+class PagoSerializer(serializers.Serializer):
+    cita_id = serializers.IntegerField()

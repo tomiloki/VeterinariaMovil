@@ -1,48 +1,31 @@
-"""
-URL configuration for mascota_feliz project.
-
-The `urlpatterns` list routes URLs to views. For more information please see:
-    https://docs.djangoproject.com/en/5.2/topics/http/urls/
-Examples:
-Function views
-    1. Add an import:  from my_app import views
-    2. Add a URL to urlpatterns:  path('', views.home, name='home')
-Class-based views
-    1. Add an import:  from other_app.views import Home
-    2. Add a URL to urlpatterns:  path('', Home.as_view(), name='home')
-Including another URLconf
-    1. Import the include() function: from django.urls import include, path
-    2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
-"""
-from django.contrib import admin
 from django.urls import path, include
-from rest_framework.routers import DefaultRouter
-from rest_framework_simplejwt.views import (
-    TokenObtainPairView,
-    TokenRefreshView,
-    TokenRefreshView,
-)
-from .views import UsuarioPerfilView, RegistroUsuarioView
-from mascota_feliz.views import (
-    MascotaViewSet, CitaViewSet,
-    MedicamentoViewSet, RutaMovilViewSet, UsuarioViewSet,
-    OrdenViewSet
-
+from django.contrib import admin
+from rest_framework import routers
+from .views import (
+    UsuarioViewSet, MascotaViewSet, CitaViewSet,
+    MedicamentoViewSet, RutaMovilViewSet,
+    OrdenViewSet, OrdenItemViewSet,
+    UsuarioPerfilView, RegistroUsuarioView,
+    CustomTokenObtainPairView, CustomTokenRefreshView, 
+    CrearPagoView, ConfirmarPagoView
 )
 
-router = DefaultRouter()
+router = routers.DefaultRouter()
+router.register(r'usuarios', UsuarioViewSet)
 router.register(r'mascotas', MascotaViewSet)
 router.register(r'citas', CitaViewSet)
 router.register(r'medicamentos', MedicamentoViewSet)
-router.register(r'rutas-movil', RutaMovilViewSet, basename='rutasmovil')
-router.register(r'usuarios', UsuarioViewSet)
+router.register(r'rutas-movil', RutaMovilViewSet, basename='rutas-movil')
 router.register(r'ordenes', OrdenViewSet)
+router.register(r'orden-items', OrdenItemViewSet)
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('api/', include(router.urls)),
-    path('api/login/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
-    path('api/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
-    path('api/miusuario/', UsuarioPerfilView.as_view(), name='miusuario'),
-    path('api/register/', RegistroUsuarioView.as_view(), name='registro_usuario'),
+    path('api/', include((router.urls, 'api'), namespace='api')),
+    path('api/perfil/', UsuarioPerfilView.as_view(), name='perfil'),
+    path('api/registro/', RegistroUsuarioView.as_view(), name='registro'),
+    path('api/token/', CustomTokenObtainPairView.as_view(), name='token_obtain_pair'),
+    path('api/token/refresh/', CustomTokenRefreshView.as_view(), name='token_refresh'),
+    path('api/pago/', CrearPagoView.as_view(), name='crear_pago'),
+    path('api/pago/commit/', ConfirmarPagoView.as_view(), name='confirmar_pago'),
 ]
