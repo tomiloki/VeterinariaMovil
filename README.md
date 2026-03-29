@@ -45,6 +45,8 @@ JWT_ROTATE_REFRESH_TOKENS=False
 
 WEBPAY_HOST=https://webpay3gint.transbank.cl
 WEBPAY_API_KEY_ID=597055555532
+# Si usas comercio de integracion (597055555532), puedes dejar el secret como
+# placeholder para que el backend aplique fallback automatico de integracion.
 WEBPAY_API_KEY_SECRET=replace-with-webpay-secret
 ```
 
@@ -147,7 +149,7 @@ Pasos:
    - `CORS_ALLOWED_ORIGINS=https://tu-frontend.vercel.app`
    - `CSRF_TRUSTED_ORIGINS=https://tu-frontend.vercel.app`
    - `FRONTEND_URL=https://tu-frontend.vercel.app`
-   - `WEBPAY_API_KEY_SECRET` (en el panel de Render)
+   - `WEBPAY_API_KEY_ID=597055555532` (integracion)
 4. Deploy.
 
 Notas para plan gratis:

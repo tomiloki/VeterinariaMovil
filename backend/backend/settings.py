@@ -156,7 +156,7 @@ _integration_commerce_code = "597055555532"
 _integration_api_key_secret = "579B532A7440BB0C9079DED94D31EA1615BACEB56610332264630D42D0A36B1C"
 
 WEBPAY_USING_FALLBACK_INTEGRATION_SECRET = False
-if DEBUG and WEBPAY_API_KEY_ID == _integration_commerce_code and (
+if WEBPAY_API_KEY_ID == _integration_commerce_code and (
     not _webpay_secret or _webpay_secret.startswith("replace-with")
 ):
     WEBPAY_API_KEY_SECRET = _integration_api_key_secret
