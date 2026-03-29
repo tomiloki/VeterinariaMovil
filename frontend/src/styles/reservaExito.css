@@ -1,95 +1,78 @@
-/* src/styles/reservaExito.css */
-
-/* Variables globales compartidas */
-:root {
-  --color-bg-page:    #E0F7FA; /* celeste muy claro */
-  --color-accent:     #FF8C94; /* rosa pastel */
-  --color-text-dark:  #37474F; /* gris oscuro suave */
-  --color-card-bg:    #FFFFFF; /* blanco puro */
-  --color-hover:      #FFD3B6; /* durazno claro */
-}
-
-/* Fondo y contenedor */
 .exito-page {
-  min-height: 100vh;
-  padding: 2rem 1rem;
-  background-color: var(--color-bg-page);
   display: flex;
-  align-items: center;
   justify-content: center;
 }
 
-/* Tarjeta central */
 .exito-card {
-  background: var(--color-card-bg);
-  padding: 2rem;
-  border-radius: 1rem;
-  box-shadow: 0 4px 16px rgba(0,0,0,0.08);
-  max-width: 500px;
-  width: 100%;
-  text-align: center;
+  width: min(640px, 100%);
+  background: var(--surface-0);
+  border: 1px solid var(--surface-200);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-card);
+  padding: 1.3rem;
+  display: grid;
+  gap: 0.9rem;
 }
 
-/* Icono de éxito */
 .exito-icon {
-  font-size: 3rem;
-  margin-bottom: 0.5rem;
-  color: var(--color-accent);
+  width: 54px;
+  height: 54px;
+  border-radius: 999px;
+  background: var(--brand-100);
+  color: var(--brand-700);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.55rem;
+  font-weight: 800;
 }
 
-/* Título */
 .exito-card h2 {
-  font-size: 1.9rem;
-  color: var(--color-text-dark);
-  margin-bottom: 1rem;
+  color: var(--ink-950);
+  font-size: 1.5rem;
 }
 
-/* Detalles de la cita */
+.exito-subtitle {
+  margin: 0;
+  color: var(--ink-700);
+}
+
 .exito-details {
-  list-style: none;
-  padding: 0;
-  margin: 0 0 1.5rem;
-}
-.exito-details li {
-  margin-bottom: 0.8rem;
-  color: var(--color-text-dark);
-  font-size: 1rem;
+  margin: 0;
+  padding-left: 1rem;
+  color: var(--ink-800);
+  display: grid;
+  gap: 0.3rem;
 }
 
-/* Botones */
 .exito-buttons {
   display: flex;
-  gap: 1rem;
+  flex-wrap: wrap;
+  gap: 0.55rem;
 }
+
 .exito-buttons .btn-outline,
 .exito-buttons .btn-solid {
-  flex: 1;
-  padding: 0.75rem;
-  font-size: 1rem;
-  font-weight: 600;
-  border-radius: 0.6rem;
-  cursor: pointer;
-  transition: background-color 0.2s, color 0.2s;
+  border-radius: 999px;
+  padding: 0.62rem 1rem;
+  font-weight: 700;
 }
 
-/* Botón transparente */
 .btn-outline {
-  background: transparent;
-  border: 2px solid var(--color-accent);
-  color: var(--color-accent);
-}
-.btn-outline:hover {
-  background: var(--color-accent);
-  color: #fff;
+  background: var(--surface-0);
+  color: var(--ink-800);
+  border: 1px solid var(--surface-200);
 }
 
-/* Botón sólido */
-.btn-solid {
-  background: var(--color-accent);
-  border: none;
-  color: #fff;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+.btn-outline:hover {
+  background: var(--surface-100);
 }
+
+.btn-solid {
+  background: linear-gradient(135deg, var(--brand-600), var(--brand-500));
+  color: #ffffff;
+}
+
 .btn-solid:hover {
-  background: #FFAAA5;
+  transform: translateY(-1px);
 }

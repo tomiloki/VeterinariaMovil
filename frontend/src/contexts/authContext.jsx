@@ -1,128 +1,151 @@
-// src/contexts/authContext.jsx
-import React, { createContext, useState, useEffect, useContext } from 'react';
-import { useNavigate } from 'react-router-dom';
+import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 
-export const AuthContext = createContext();
-const API_URL = import.meta.env.VITE_API_URL;
+import { AuthContext } from "./auth-context";
+import { apiRequest, extractApiError } from "../services/api";
+
+const ACCESS_KEY = "access";
+const REFRESH_KEY = "refresh";
+
+function getStoredToken(key) {
+  return localStorage.getItem(key) || sessionStorage.getItem(key);
+}
+
+function clearStoredTokens() {
+  localStorage.removeItem(ACCESS_KEY);
+  localStorage.removeItem(REFRESH_KEY);
+  sessionStorage.removeItem(ACCESS_KEY);
+  sessionStorage.removeItem(REFRESH_KEY);
+}
+
+function persistTokens(access, refresh, rememberSession) {
+  clearStoredTokens();
+  const targetStorage = rememberSession ? localStorage : sessionStorage;
+  targetStorage.setItem(ACCESS_KEY, access);
+  targetStorage.setItem(REFRESH_KEY, refresh);
+}
+
+function persistAccessToken(access) {
+  if (localStorage.getItem(REFRESH_KEY)) {
+    localStorage.setItem(ACCESS_KEY, access);
+    return;
+  }
+  if (sessionStorage.getItem(REFRESH_KEY)) {
+    sessionStorage.setItem(ACCESS_KEY, access);
+    return;
+  }
+  localStorage.setItem(ACCESS_KEY, access);
+}
 
 export const AuthProvider = ({ children }) => {
   const navigate = useNavigate();
-
-  // Nuevo estado para el objeto completo del usuario
   const [user, setUser] = useState(null);
   const [loadingAuth, setLoadingAuth] = useState(true);
 
-  // Login original, pero tras guardar tokens, traemos el perfil
-  const login = async (username, password) => {
-    const res = await fetch(`${API_URL}/token/`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ username, password }),
-    });
-    const data = await res.json();
-    if (!res.ok) {
-      const msg = Object.values(data).flat().join(' ') || data.detail || 'Error al iniciar sesión';
-      throw new Error(msg);
-    }
-    localStorage.setItem('access', data.access);
-    localStorage.setItem('refresh', data.refresh);
-
-    // Ahora traemos el perfil
-    const perfilRes = await fetch(`${API_URL}/perfil/`, {
-      headers: { Authorization: `Bearer ${data.access}` }
-    });
-    const perfilData = await perfilRes.json();
-    if (!perfilRes.ok) {
-      throw new Error('No se pudo obtener perfil.');
-    }
-    setUser(perfilData);
-    navigate('/');
-  };
-
   const logout = () => {
-    localStorage.removeItem('access');
-    localStorage.removeItem('refresh');
+    clearStoredTokens();
     setUser(null);
-    navigate('/login');
+    navigate("/login");
   };
 
-  // fetchWithAuth igual que antes, pero devolviendo { status, data }
+  const fetchProfile = async (accessToken) => {
+    const response = await apiRequest("/perfil/", {
+      token: accessToken,
+    });
+    if (!response.ok) {
+      throw new Error(extractApiError(response.data, "No se pudo cargar el perfil."));
+    }
+    return response.data;
+  };
+
+  const login = async (username, password, rememberSession = true) => {
+    const tokenResponse = await apiRequest("/token/", {
+      method: "POST",
+      body: { username, password },
+    });
+
+    if (!tokenResponse.ok) {
+      throw new Error(extractApiError(tokenResponse.data, "Error al iniciar sesion."));
+    }
+
+    persistTokens(tokenResponse.data.access, tokenResponse.data.refresh, rememberSession);
+
+    const profile = await fetchProfile(tokenResponse.data.access);
+    setUser(profile);
+    navigate("/");
+  };
+
   const fetchWithAuth = async (path, options = {}) => {
-    const url = `${API_URL}${path}`;
-    let headers = {
-      ...(options.headers || {}),
-      Authorization: `Bearer ${localStorage.getItem('access')}`,
-    };
+    let access = getStoredToken(ACCESS_KEY);
+    const refresh = getStoredToken(REFRESH_KEY);
 
-    let res = await fetch(url, { ...options, headers });
-    if (res.status === 401) {
-      // intento de refresh
-      const refreshRes = await fetch(`${API_URL}/token/refresh/`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ refresh: localStorage.getItem('refresh') }),
+    if (!access) {
+      throw new Error("Sesion expirada. Por favor inicia sesion de nuevo.");
+    }
+
+    let response = await apiRequest(path, {
+      ...options,
+      token: access,
+    });
+
+    if (response.status === 401 && refresh) {
+      const refreshResponse = await apiRequest("/token/refresh/", {
+        method: "POST",
+        body: { refresh },
       });
-      const refreshData = await refreshRes.json();
-      if (!refreshRes.ok) {
+
+      if (!refreshResponse.ok || !refreshResponse.data?.access) {
         logout();
-        throw new Error('Sesión expirada. Por favor inicia sesión de nuevo.');
+        throw new Error("Sesion expirada. Por favor inicia sesion de nuevo.");
       }
-      localStorage.setItem('access', refreshData.access);
-      headers = {
-        ...(options.headers || {}),
-        Authorization: `Bearer ${refreshData.access}`,
-      };
-      res = await fetch(url, { ...options, headers });
+
+      access = refreshResponse.data.access;
+      persistAccessToken(access);
+
+      response = await apiRequest(path, {
+        ...options,
+        token: access,
+      });
     }
 
-    const data = await res.json();
-    if (!res.ok) {
-      const msg = Object.values(data).flat().join(' ') || data.detail || 'Error en la petición';
-      throw new Error(msg);
+    if (!response.ok) {
+      throw new Error(extractApiError(response.data, "Error en la peticion."));
     }
-    return { status: res.status, data };
+
+    return { status: response.status, data: response.data };
   };
 
-  // Al montar, si hay token, traemos perfil automáticamente
   useEffect(() => {
     const init = async () => {
-      const token = localStorage.getItem('access');
-      if (token) {
-        try {
-          const perfilRes = await fetch(`${API_URL}/perfil/`, {
-            headers: { Authorization: `Bearer ${token}` },
-          });
-          const perfilData = await perfilRes.json();
-          if (perfilRes.ok) setUser(perfilData);
-          else setUser(null);
-        } catch {
-          setUser(null);
-        }
+      const access = getStoredToken(ACCESS_KEY);
+      if (!access) {
+        setLoadingAuth(false);
+        return;
       }
-      setLoadingAuth(false);
+
+      try {
+        const profile = await fetchProfile(access);
+        setUser(profile);
+      } catch {
+        clearStoredTokens();
+        setUser(null);
+      } finally {
+        setLoadingAuth(false);
+      }
     };
+
     init();
   }, []);
 
-  // Exponemos user y un flag isAuthenticated
-  const isAuthenticated = Boolean(user);
-
-  // Mientras cargamos perfil inicial, devolvemos un spinner
   if (loadingAuth) {
-    return <div className="loading-spinner">Verificando sesión…</div>;
+    return <div className="loading-spinner">Verificando sesion...</div>;
   }
 
   return (
     <AuthContext.Provider
-      value={{ user, isAuthenticated, login, logout, fetchWithAuth }}
+      value={{ user, isAuthenticated: Boolean(user), loadingAuth, login, logout, fetchWithAuth }}
     >
       {children}
     </AuthContext.Provider>
   );
-};
-
-export const useAuth = () => {
-  const ctx = useContext(AuthContext);
-  if (!ctx) throw new Error('useAuth debe usarse dentro de <AuthProvider>');
-  return ctx;
 };

@@ -1,0 +1,302 @@
+.farmacia-page {
+  display: grid;
+  gap: 0.95rem;
+}
+
+.farmacia-hero {
+  position: relative;
+  border-radius: var(--radius-xl);
+  overflow: hidden;
+  min-height: 300px;
+  border: 1px solid var(--surface-180);
+}
+
+.farmacia-hero img {
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  inset: 0;
+  object-fit: cover;
+}
+
+.farmacia-hero-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(110deg, rgba(18, 72, 73, 0.78) 0%, rgba(18, 72, 73, 0.35) 62%, rgba(18, 72, 73, 0.14) 100%);
+}
+
+.farmacia-hero-content {
+  position: relative;
+  z-index: 1;
+  color: #ffffff;
+  padding: 1.5rem;
+  max-width: 64ch;
+  display: grid;
+  gap: 0.45rem;
+}
+
+.farmacia-hero-content p {
+  margin: 0;
+  width: fit-content;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.26);
+  background: rgba(255, 255, 255, 0.12);
+  padding: 0.2rem 0.6rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  font-size: 0.76rem;
+  font-weight: 700;
+}
+
+.farmacia-hero-content h1 {
+  font-size: clamp(1.5rem, 3vw, 2.25rem);
+  max-width: 23ch;
+  line-height: 1.2;
+}
+
+.farmacia-hero-content span {
+  color: rgba(255, 255, 255, 0.9);
+}
+
+.farmacia-toolbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: end;
+  gap: 0.8rem;
+  flex-wrap: wrap;
+}
+
+.farmacia-toolbar h2 {
+  font-size: 1.36rem;
+}
+
+.farmacia-toolbar p {
+  color: var(--ink-820);
+}
+
+.farmacia-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.farmacia-search {
+  width: min(320px, 85vw);
+}
+
+.farmacia-metrics {
+  display: grid;
+  gap: 0.6rem;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+}
+
+.farmacia-metrics article {
+  border: 1px solid var(--surface-180);
+  border-radius: var(--radius-md);
+  background: rgba(255, 255, 255, 0.72);
+  padding: 0.8rem;
+  display: grid;
+  gap: 0.18rem;
+}
+
+.farmacia-metrics span {
+  color: var(--ink-640);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  font-size: 0.76rem;
+  font-weight: 700;
+}
+
+.farmacia-metrics strong {
+  color: var(--ink-950);
+  font-size: 1.18rem;
+}
+
+.farmacia-categories {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.45rem;
+}
+
+.category-chip {
+  border-radius: 999px;
+  border: 1px solid var(--surface-180);
+  background: rgba(255, 255, 255, 0.78);
+  color: var(--ink-820);
+  font-size: 0.85rem;
+  font-weight: 700;
+  padding: 0.39rem 0.72rem;
+}
+
+.category-chip.active {
+  background: var(--brand-120);
+  color: var(--brand-760);
+  border-color: rgba(25, 98, 101, 0.33);
+}
+
+.farmacia-notice {
+  border: 1px solid rgba(25, 98, 101, 0.32);
+  border-radius: var(--radius-sm);
+  padding: 0.62rem 0.76rem;
+  background: rgba(217, 241, 242, 0.75);
+  color: var(--brand-760);
+  font-weight: 700;
+}
+
+.farmacia-grid {
+  display: grid;
+  gap: 0.72rem;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+}
+
+.med-card {
+  border: 1px solid var(--surface-180);
+  border-radius: var(--radius-lg);
+  padding: 0.8rem;
+  background: rgba(255, 255, 255, 0.78);
+  display: grid;
+  gap: 0.72rem;
+  transition: transform 150ms ease, box-shadow 150ms ease, border-color 150ms ease;
+}
+
+.med-card:hover {
+  transform: translateY(-2px);
+  border-color: rgba(25, 98, 101, 0.32);
+  box-shadow: var(--shadow-soft);
+}
+
+.med-card-image {
+  width: 100%;
+  height: 160px;
+  border-radius: var(--radius-md);
+  object-fit: cover;
+}
+
+.med-card-content {
+  display: grid;
+  gap: 0.35rem;
+}
+
+.med-card-content h3 {
+  font-size: 1.04rem;
+}
+
+.med-card-content p {
+  color: var(--ink-820);
+  font-size: 0.92rem;
+}
+
+.med-category {
+  justify-self: start;
+  border-radius: 999px;
+  padding: 0.2rem 0.6rem;
+  font-size: 0.7rem;
+  font-weight: 800;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+  border: 1px solid transparent;
+}
+
+.med-category.parasitarios {
+  color: #785508;
+  background: #fff3d7;
+  border-color: #eccd81;
+}
+
+.med-category.dermatologia {
+  color: #5d3564;
+  background: #f8eafc;
+  border-color: #dcb7eb;
+}
+
+.med-category.antibioticos {
+  color: #8e4022;
+  background: #fde8de;
+  border-color: #f4c3ac;
+}
+
+.med-category.analgesia {
+  color: #7e3444;
+  background: #fce5e9;
+  border-color: #f2bcc7;
+}
+
+.med-category.nutricion {
+  color: #1b5f5b;
+  background: #def3ee;
+  border-color: #9adcd4;
+}
+
+.med-category.insumos,
+.med-category.general {
+  color: #334e6f;
+  background: #e5eefc;
+  border-color: #b8cef0;
+}
+
+.med-card-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: end;
+}
+
+.price-label {
+  color: var(--ink-640);
+  font-size: 0.76rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  font-weight: 700;
+}
+
+.price-value {
+  color: var(--ink-950);
+  font-weight: 800;
+}
+
+.stock {
+  font-size: 0.84rem;
+  font-weight: 700;
+}
+
+.stock.in {
+  color: var(--success-700);
+}
+
+.stock.out {
+  color: var(--danger-700);
+}
+
+.med-card-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.med-detail-btn {
+  font-size: 0.84rem;
+  padding: 0.4rem 0.68rem;
+}
+
+.med-card .btn-secondary:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+@media (max-width: 780px) {
+  .farmacia-hero {
+    min-height: 260px;
+  }
+
+  .farmacia-toolbar {
+    align-items: start;
+  }
+
+  .farmacia-actions {
+    width: 100%;
+  }
+
+  .farmacia-search {
+    width: 100%;
+  }
+}

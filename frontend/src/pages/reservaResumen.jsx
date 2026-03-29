@@ -1,105 +1,102 @@
-// src/pages/reservaResumen.jsx
-import React, { useState, useEffect } from 'react';
-import { useLocation, useNavigate } from 'react-router-dom';
-import { useAuth } from '../contexts/authContext';
-import '../styles/reservaResumen.css';
+import React, { useEffect } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
+
+import { useScrollReveal } from "../hooks/useScrollReveal";
+import "../styles/reservaResumen.css";
+
+const SERVICE_LABELS = {
+  revision: "Revision clinica",
+  aseo: "Arreglos y aseo",
+  quirurgico: "Intervenciones quirurgicas",
+};
+
+function getWebpayLabel(webpayStatus) {
+  if (webpayStatus === "AUTHORIZED") {
+    return "Autorizado";
+  }
+  if (webpayStatus === "FAILED") {
+    return "Rechazado";
+  }
+  if (!webpayStatus) {
+    return "Sin informacion";
+  }
+  return webpayStatus;
+}
 
 export default function ReservaResumen() {
-  console.log('[ReservaResumen] render start');
   const { state } = useLocation();
   const navigate = useNavigate();
-  const { fetchWithAuth } = useAuth();
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState('');
 
   useEffect(() => {
     if (!state) {
-      console.warn('[ReservaResumen] no state, redirigiendo a "/reservar"');
-      navigate('/reservar', { replace: true });
+      navigate("/", { replace: true });
     }
   }, [state, navigate]);
 
+  useScrollReveal(".resumen-page .reveal-on-scroll", String(Boolean(state)));
+
   if (!state) {
-    return <div className="loading-spinner">Redirigiendo al formulario…</div>;
+    return <div className="loading-spinner">Cargando confirmacion...</div>;
   }
 
-  const { subservicio, tipo, mascota, fecha, motivo, direccion } = state;
-  const formattedDate = new Date(fecha).toLocaleString(undefined, {
-    dateStyle: 'long',
-    timeStyle: 'short',
-  });
-  console.log('[ReservaResumen] datos recibidos:', { subservicio, tipo, mascota, fecha, motivo, direccion });
+  const {
+    estado_pago: estadoPago,
+    subservicio,
+    tipo,
+    mascota,
+    fecha,
+    motivo,
+    detalle,
+    webpay_status: webpayStatus,
+  } = state;
 
-  const handleConfirm = async () => {
-    console.log('[ReservaResumen] handleConfirm: iniciando confirmación');
-    console.log('[ReservaResumen] payload:', { subservicio, tipo, mascota, fecha, motivo, ...(tipo === 'movil' && { direccion }) });
-    setLoading(true);
-    setError('');
-    try {
-      const { status, data } = await fetchWithAuth('/citas/', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          subservicio,
-          tipo,
-          mascota,
-          fecha,
-          motivo,
-          ...(tipo === 'movil' && { direccion }),
-        }),
-      });
-      console.log('[ReservaResumen] confirm response:', status, data);
-      navigate('/reservar/exito', { state: { subservicio, tipo, mascota, fecha, motivo, direccion } });
-    } catch (err) {
-      console.error('[ReservaResumen] error al confirmar cita:', err);
-      setError(err.message || 'Error al confirmar la cita. Intenta nuevamente.');
-    } finally {
-      setLoading(false);
-      console.log('[ReservaResumen] handleConfirm finalizado, loading=false');
-    }
-  };
+  const isAuthorized = estadoPago === "AUTHORIZED";
+  const formattedDate = fecha ? new Date(fecha).toLocaleString() : "-";
+  const paymentLabel = isAuthorized ? "Pago aprobado" : "Pago no confirmado";
+  const paymentDetail = detalle || (isAuthorized ? "Tu reserva quedo pagada correctamente." : "No logramos confirmar el pago.");
 
   return (
     <div className="resumen-page" role="region" aria-labelledby="resumen-title">
-      <div className="resumen-card" role="dialog" aria-modal="true">
-        <h2 id="resumen-title">Resumen de tu Reserva</h2>
+      <div className="resumen-card reveal-on-scroll" role="dialog" aria-modal="true">
+        <h2 id="resumen-title">{isAuthorized ? "Tu cita quedo confirmada" : "Revisa el estado de tu pago"}</h2>
+        <p className="resumen-subtitle">
+          {isAuthorized
+            ? "Listo, tu atencion veterinaria esta reservada y pagada."
+            : "Puedes intentar nuevamente el pago o reservar otra hora cuando quieras."}
+        </p>
+
+        <span className={`payment-status ${isAuthorized ? "success" : "failed"}`}>{paymentLabel}</span>
+
         <ul className="resumen-details">
-          <li><strong>Servicio:</strong> {subservicio}</li>
           <li>
-            <strong>Tipo:</strong> {tipo === 'presencial' ? 'Presencial' : 'Móvil'}
+            <strong>Detalle:</strong> {paymentDetail}
           </li>
-          <li><strong>Mascota:</strong> {mascota}</li>
-          <li><strong>Fecha y hora:</strong> {formattedDate}</li>
-          <li><strong>Motivo:</strong> {motivo}</li>
-          {tipo === 'movil' && (
-            <li><strong>Dirección:</strong> {direccion}</li>
-          )}
+          <li>
+            <strong>Servicio:</strong> {SERVICE_LABELS[subservicio] || subservicio || "-"}
+          </li>
+          <li>
+            <strong>Tipo:</strong> {tipo === "movil" ? "Movil" : "Presencial"}
+          </li>
+          <li>
+            <strong>Mascota:</strong> {mascota || "-"}
+          </li>
+          <li>
+            <strong>Fecha:</strong> {formattedDate}
+          </li>
+          <li>
+            <strong>Motivo:</strong> {motivo || "-"}
+          </li>
+          <li>
+            <strong>Estado en Webpay:</strong> {getWebpayLabel(webpayStatus)}
+          </li>
         </ul>
-        {error && (
-          <p className="error-text" role="alert">
-            {error}
-          </p>
-        )}
+
         <div className="resumen-buttons" aria-label="Acciones">
-          <button
-            type="button"
-            onClick={() => {
-              console.log('[ReservaResumen] Volver clic, navega back');
-              navigate('/');
-            }}
-            disabled={loading}
-          >
-            Volver
+          <button type="button" onClick={() => navigate("/reservar")}>
+            Agendar otra cita
           </button>
-          <button
-            type="button"
-            className="btn-confirm"
-            onClick={() => {
-              navigate('/');
-            }}
-            disabled={loading}
-          >
-            {loading ? 'Confirmando…' : 'Ver mis reservas'}
+          <button type="button" className="btn-confirm" onClick={() => navigate("/")}>
+            Volver al inicio
           </button>
         </div>
       </div>

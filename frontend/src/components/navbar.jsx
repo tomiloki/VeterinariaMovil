@@ -1,139 +1,120 @@
-// src/components/navbar.jsx
-import React, { useState, useEffect } from 'react';
-import { NavLink, useNavigate } from 'react-router-dom';
-import { useAuth } from '../contexts/authContext';
-import ReservationDropdown from './reservationDropdown';
-import '../styles/navbar.css';
+import React, { useEffect, useRef, useState } from "react";
+import { NavLink, useNavigate } from "react-router-dom";
+
+import { useAuth } from "../contexts/auth-context";
+import { useCart } from "../contexts/cart-context";
+import ReservationDropdown from "./reservationDropdown";
+import "../styles/navbar.css";
 
 export default function Navbar() {
   const { user, logout } = useAuth();
+  const { cartCount } = useCart();
   const navigate = useNavigate();
   const [menuOpen, setMenuOpen] = useState(false);
   const [dropdownOpen, setDropdownOpen] = useState(false);
-  const [tipoCita, setTipoCita] = useState('presencial');
-
-  const isAuthenticated = Boolean(user);
+  const [tipoCita, setTipoCita] = useState("presencial");
+  const wrapperRef = useRef(null);
 
   useEffect(() => {
-    console.log('[Navbar] State:', {
-      user,
-      isAuthenticated,
-      menuOpen,
-      dropdownOpen,
-      tipoCita,
-    });
-  }, [user, isAuthenticated, menuOpen, dropdownOpen, tipoCita]);
+    const handleClickOutside = (event) => {
+      if (!wrapperRef.current?.contains(event.target)) {
+        setMenuOpen(false);
+        setDropdownOpen(false);
+      }
+    };
 
-  const handleLinkClick = () => {
-    console.log('[Navbar] Closing menus');
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
+  const closePanels = () => {
     setMenuOpen(false);
     setDropdownOpen(false);
   };
 
   const handleSelect = (tipo) => {
-    console.log('[Navbar] Selected tipo de cita:', tipo);
     setTipoCita(tipo);
-    setDropdownOpen(false);
+    closePanels();
     navigate(`/reservar?tipo=${tipo}`);
-    console.log('[Navbar] Navigated to:', `/reservar?tipo=${tipo}`);
-  };
-
-  const handleLogout = () => {
-    console.log('[Navbar] Logout clicked');
-    logout();
-    console.log('[Navbar] Logout completed');
   };
 
   return (
-    <header className="navbar">
-      <div className="container">
-        <NavLink to="/" className="logo" onClick={handleLinkClick}>
-          Mascota Feliz
+    <header className="navbar" ref={wrapperRef}>
+      <div className="navbar-inner">
+        <NavLink to="/" className="logo" onClick={closePanels}>
+          <span className="logo-badge" aria-hidden="true">
+            MF
+          </span>
+          <span>
+            <strong>Mascota Feliz</strong>
+            <small>Clinica & farmacia veterinaria</small>
+          </span>
         </NavLink>
 
-        <button
-          className="hamburger"
-          aria-label="Menú"
-          onClick={(e) => {
-            e.stopPropagation();
-            console.log('[Navbar] Hamburger click, open:', !menuOpen);
-            setMenuOpen(o => !o);
-          }}
-        >
-          ☰
+        <button type="button" className="hamburger" aria-label="Abrir menu" onClick={() => setMenuOpen((open) => !open)}>
+          Menu
         </button>
 
-        <nav className={menuOpen ? 'open' : ''}>
-          <NavLink to="/#servicios" className="nav-item" onClick={handleLinkClick}>
+        <nav className={`navbar-nav ${menuOpen ? "open" : ""}`}>
+          <a href="/#servicios" className="nav-item" onClick={closePanels}>
             Servicios
-          </NavLink>
-          <NavLink to="/#nosotros" className="nav-item" onClick={handleLinkClick}>
-            Nosotros
-          </NavLink>
-          <NavLink to="/#contacto" className="nav-item" onClick={handleLinkClick}>
+          </a>
+          <a href="/#nosotros" className="nav-item" onClick={closePanels}>
+            Clinica
+          </a>
+          <a href="/#contacto" className="nav-item" onClick={closePanels}>
             Contacto
-          </NavLink>
+          </a>
 
-          {isAuthenticated ? (
-            <div className="actions">
-              <div
-                className="dropdown-wrapper"
-                onClick={(e) => {
-                  e.stopPropagation();
-                }}
-              >
-                <button
-                  className="btn-reservar"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    console.log('[Navbar] Reservar Cita click, toggle open:', !dropdownOpen);
-                    setDropdownOpen(o => !o);
-                  }}
-                >
-                  <i className="fas fa-calendar-plus" aria-hidden="true" />
-                  Reservar Cita
+          {user ? (
+            <>
+              <NavLink to="/farmacia" className="nav-item" onClick={closePanels}>
+                Farmacia
+              </NavLink>
+              <NavLink to="/carrito" className="nav-item nav-cart" onClick={closePanels}>
+                Carrito
+                {cartCount > 0 && <span className="cart-count">{cartCount}</span>}
+              </NavLink>
+
+              <div className="dropdown-wrapper">
+                <button type="button" className="btn-secondary nav-reserve" onClick={() => setDropdownOpen((open) => !open)}>
+                  Reservar consulta
                 </button>
-
                 {dropdownOpen && (
-                  <ReservationDropdown
-                    active={tipoCita}
-                    onSelect={handleSelect}
-                    onClose={() => {
-                      console.log('[Navbar] Closing dropdown');
-                      setDropdownOpen(false);
-                    }}
-                  />
+                  <ReservationDropdown active={tipoCita} onSelect={handleSelect} onClose={() => setDropdownOpen(false)} />
                 )}
               </div>
 
               <button
-                className="icon-btn"
+                type="button"
+                className="btn-ghost"
                 onClick={() => {
-                  console.log('[Navbar] Perfil click, navigating to /perfil');
-                  navigate('/perfil');
+                  closePanels();
+                  navigate("/perfil");
                 }}
-                aria-label="Perfil"
               >
-                <i className="fas fa-user-circle" aria-hidden="true" />
+                Perfil
               </button>
-
               <button
-                className="icon-btn"
-                onClick={handleLogout}
-                aria-label="Cerrar Sesión"
+                type="button"
+                className="btn-ghost"
+                onClick={() => {
+                  closePanels();
+                  logout();
+                }}
               >
-                <i className="fas fa-sign-out-alt" aria-hidden="true" />
+                Salir
               </button>
-            </div>
+            </>
           ) : (
-            <div className="actions">
-              <NavLink to="/login" className="nav-item" onClick={handleLinkClick}>
-                Login
+            <>
+              <NavLink to="/login" className="nav-item" onClick={closePanels}>
+                Ingresar
               </NavLink>
-              <NavLink to="/register" className="nav-item" onClick={handleLinkClick}>
-                Registro
+              <NavLink to="/register" className="nav-item" onClick={closePanels}>
+                Crear cuenta
               </NavLink>
-            </div>
+            </>
           )}
         </nav>
       </div>

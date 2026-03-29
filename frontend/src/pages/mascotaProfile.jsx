@@ -1,7 +1,33 @@
-// frontend/src/pages/mascotaProfile.jsx
-import React, { useEffect, useState, useMemo } from 'react';
-import { useParams, Link } from 'react-router-dom';
-import { useAuth } from '../contexts/authContext';
+import React, { useEffect, useMemo, useState } from "react";
+import { Link, useParams } from "react-router-dom";
+
+import { useAuth } from "../contexts/auth-context";
+import { BRAND_IMAGES } from "../data/imageLibrary";
+import "../styles/mascotaProfile.css";
+
+const TAB_CONFIG = [
+  { key: "ficha", label: "Ficha clinica" },
+  { key: "historial", label: "Historial" },
+  { key: "vacunas", label: "Vacunas" },
+  { key: "facturacion", label: "Facturacion" },
+];
+
+function serviceLabel(value) {
+  if (value === "revision") return "Revision clinica";
+  if (value === "aseo") return "Arreglos y aseo";
+  if (value === "quirurgico") return "Intervenciones quirurgicas";
+  return value || "-";
+}
+
+function petHeroImage(pet) {
+  if (!pet) {
+    return BRAND_IMAGES.gallery[0];
+  }
+  if (String(pet.especie).toLowerCase().includes("gato")) {
+    return BRAND_IMAGES.gallery[1];
+  }
+  return BRAND_IMAGES.gallery[0];
+}
 
 export default function MascotaProfile() {
   const { id } = useParams();
@@ -10,30 +36,38 @@ export default function MascotaProfile() {
   const [pet, setPet] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [activeTab, setActiveTab] = useState('ficha');
+  const [activeTab, setActiveTab] = useState("ficha");
 
   useEffect(() => {
+    let mounted = true;
     setLoading(true);
+
     fetchWithAuth(`/mascotas/${id}/`)
       .then(({ data }) => {
+        if (!mounted) {
+          return;
+        }
         setPet(data);
         setError(null);
       })
-      .catch(err => {
-        console.error('Error cargando datos de mascota:', err);
-        setError('No se pudo cargar la información de la mascota.');
+      .catch((requestError) => {
+        if (!mounted) {
+          return;
+        }
+        setError(requestError.message || "No se pudo cargar la informacion de la mascota.");
       })
       .finally(() => {
-        setLoading(false);
+        if (mounted) {
+          setLoading(false);
+        }
       });
+
+    return () => {
+      mounted = false;
+    };
   }, [id, fetchWithAuth]);
 
-  const tabs = useMemo(() => [
-    { key: 'ficha', label: 'Ficha Clínica' },
-    { key: 'historial', label: 'Historial de Citas' },
-    { key: 'vacunas', label: 'Vacunas' },
-    { key: 'facturacion', label: 'Facturación' },
-  ], []);
+  const tabs = useMemo(() => TAB_CONFIG, []);
 
   if (loading) {
     return <div className="loading-spinner">Cargando datos de la mascota...</div>;
@@ -44,121 +78,113 @@ export default function MascotaProfile() {
   }
 
   if (!pet) {
-    return <div className="text-center p-8">Mascota no encontrada.</div>;
+    return <div className="empty-state">Mascota no encontrada.</div>;
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      {/* Header */}
-      <header className="bg-white shadow">
-        <div className="container mx-auto px-4 py-4 flex justify-between items-center">
-          <h1 className="text-2xl font-bold">Mascota Feliz</h1>
-          <nav className="space-x-4">
-            <Link to="/" className="hover:underline">Home</Link>
-            <a href="#servicios" className="hover:underline">Servicios</a>
-            <Link to="/mascotas" className="hover:underline">Mis Mascotas</Link>
-            <Link to="/perfil" className="hover:underline">Mi Perfil</Link>
-          </nav>
+    <section className="mascota-page">
+      <article className="mascota-hero">
+        <img src={petHeroImage(pet)} alt={`Paciente ${pet.nombre}`} />
+        <div className="mascota-hero-overlay" />
+        <div className="mascota-hero-content">
+          <p>Paciente activo</p>
+          <h1>{pet.nombre}</h1>
+          <span>
+            {pet.especie} · {pet.raza || "Sin raza especificada"}
+          </span>
         </div>
-      </header>
+      </article>
 
-      {/* Main Profile Card */}
-      <main className="container mx-auto px-4 py-6">
-        <div className="bg-white rounded-lg shadow p-6">
-          <div className="flex items-center space-x-6">
-            <img
-              src={pet.fotoUrl ?? '/placeholder-pet.jpg'}
-              alt={`Foto de ${pet.nombre}`}
-              className="w-32 h-32 object-cover rounded-full"
-            />
+      <article className="mascota-shell page-shell">
+        <header className="mascota-header">
+          <div className="mascota-summary">
             <div>
-              <h2 className="text-3xl font-bold mb-1">{pet.nombre}</h2>
-              <p className="text-gray-600">
-                {pet.especie} – {pet.raza || 'Sin especificar'}
-              </p>
-              <p className="text-gray-600">Edad: {pet.edad} años</p>
-              <p className="text-gray-600">Peso: {pet.peso} kg</p>
+              <span>Edad</span>
+              <strong>{pet.edad} anos</strong>
+            </div>
+            <div>
+              <span>Peso</span>
+              <strong>{pet.peso} kg</strong>
+            </div>
+            <div>
+              <span>ID paciente</span>
+              <strong>#{pet.id}</strong>
             </div>
           </div>
 
-          {/* Tabs */}
-          <div className="mt-6 border-b">
-            <nav className="-mb-px flex space-x-8">
-              {tabs.map(({ key, label }) => (
-                <button
-                  key={key}
-                  onClick={() => setActiveTab(key)}
-                  className={`pb-2 border-b-2 ${
-                    activeTab === key
-                      ? 'border-blue-600 text-blue-600'
-                      : 'border-transparent hover:border-gray-300'
-                  }`}
-                >
-                  {label}
-                </button>
-              ))}
-            </nav>
-          </div>
+          <nav className="mascota-nav">
+            <Link to="/">Inicio</Link>
+            <Link to="/reservar">Reservas</Link>
+            <Link to="/perfil">Perfil</Link>
+          </nav>
+        </header>
 
-          {/* Tab Content */}
-          <section className="mt-4">
-            {activeTab === 'ficha' && (
-              <div>
-                <h3 className="text-xl font-semibold mb-2">Detalles de Salud</h3>
-                <p>{pet.notasClinicas || 'Sin notas clínicas disponibles.'}</p>
-              </div>
-            )}
-            {activeTab === 'historial' && (
-              <div>
-                <h3 className="text-xl font-semibold mb-2">Historial de Citas</h3>
-                {pet.citas?.length > 0 ? (
-                  <ul className="list-disc list-inside">
-                    {pet.citas.map(cita => (
-                      <li key={cita.id}>
-                        {new Date(cita.fecha).toLocaleString()} – {cita.subservicio}
-                      </li>
-                    ))}
-                  </ul>
-                ) : (
-                  <p>No hay historial de citas.</p>
-                )}
-              </div>
-            )}
-            {activeTab === 'vacunas' && (
-              <div>
-                <h3 className="text-xl font-semibold mb-2">Vacunas</h3>
-                {pet.vacunas?.length > 0 ? (
-                  <ul className="list-disc list-inside">
-                    {pet.vacunas.map(vacuna => (
-                      <li key={vacuna.id}>
-                        {vacuna.nombre} – {new Date(vacuna.fecha).toLocaleDateString()}
-                      </li>
-                    ))}
-                  </ul>
-                ) : (
-                  <p>No hay registro de vacunas.</p>
-                )}
-              </div>
-            )}
-            {activeTab === 'facturacion' && (
-              <div>
-                <h3 className="text-xl font-semibold mb-2">Facturación</h3>
-                {pet.facturas?.length > 0 ? (
-                  <ul className="list-disc list-inside">
-                    {pet.facturas.map(factura => (
-                      <li key={factura.id}>
-                        Factura #{factura.id} – ${factura.total.toFixed(2)}
-                      </li>
-                    ))}
-                  </ul>
-                ) : (
-                  <p>No hay facturas disponibles.</p>
-                )}
-              </div>
-            )}
-          </section>
+        <div className="tabs-row" role="tablist" aria-label="Secciones de mascota">
+          {tabs.map((tab) => (
+            <button
+              key={tab.key}
+              type="button"
+              role="tab"
+              aria-selected={activeTab === tab.key}
+              className={activeTab === tab.key ? "tab active" : "tab"}
+              onClick={() => setActiveTab(tab.key)}
+            >
+              {tab.label}
+            </button>
+          ))}
         </div>
-      </main>
-    </div>
+
+        <section className="tab-panel">
+          {activeTab === "ficha" && (
+            <div className="panel-block">
+              <h2>Observaciones clinicas</h2>
+              <p>{pet.notasClinicas || "Aun no hay notas clinicas registradas para este paciente."}</p>
+            </div>
+          )}
+
+          {activeTab === "historial" &&
+            (pet.citas?.length > 0 ? (
+              <ul>
+                {pet.citas.map((cita) => (
+                  <li key={cita.id}>
+                    <strong>{new Date(cita.fecha).toLocaleString()}</strong>
+                    <span>{serviceLabel(cita.subservicio)}</span>
+                  </li>
+                ))}
+              </ul>
+            ) : (
+              <p>No hay historial de citas por ahora.</p>
+            ))}
+
+          {activeTab === "vacunas" &&
+            (pet.vacunas?.length > 0 ? (
+              <ul>
+                {pet.vacunas.map((vacuna) => (
+                  <li key={vacuna.id}>
+                    <strong>{vacuna.nombre}</strong>
+                    <span>{new Date(vacuna.fecha).toLocaleDateString()}</span>
+                  </li>
+                ))}
+              </ul>
+            ) : (
+              <p>No hay registro de vacunas cargado.</p>
+            ))}
+
+          {activeTab === "facturacion" &&
+            (pet.facturas?.length > 0 ? (
+              <ul>
+                {pet.facturas.map((factura) => (
+                  <li key={factura.id}>
+                    <strong>Factura #{factura.id}</strong>
+                    <span>${Number(factura.total).toFixed(2)}</span>
+                  </li>
+                ))}
+              </ul>
+            ) : (
+              <p>No hay facturas asociadas a este paciente.</p>
+            ))}
+        </section>
+      </article>
+    </section>
   );
 }

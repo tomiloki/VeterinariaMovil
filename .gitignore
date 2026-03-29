@@ -27,6 +27,8 @@ env/
 
 # Build and misc
 *.log
+.vercel/
+*.tgz
 .DS_Store
 Thumbs.db
 .idea/

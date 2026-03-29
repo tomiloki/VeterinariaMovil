@@ -1,128 +1,147 @@
-/* navbar.css */
-
-/* Colores suaves para clínica veterinaria */
-:root {
-  --color-bg:    #A8E6CF; /* verde pastel claro */
-  --color-accent: #FF8C94; /* rosa pastel */
-  --color-text:   #37474F; /* gris oscuro suave */
-  --color-hover:  #FFD3B6; /* durazno claro */
-}
-
-/* Contenedor principal */
 .navbar {
-  background-color: var(--color-bg);
-  color: var(--color-text);
-  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
-  font-family: 'Helvetica Neue', Arial, sans-serif;
   position: sticky;
   top: 0;
-  z-index: 100;
+  z-index: 130;
+  backdrop-filter: blur(14px);
+  background: rgba(248, 245, 240, 0.86);
+  border-bottom: 1px solid rgba(229, 221, 211, 0.9);
 }
 
-/* Flex interno */
-.navbar .container {
+.navbar-inner {
+  width: min(1240px, 100% - 2.2rem);
+  margin: 0 auto;
+  min-height: 78px;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 0.5rem 1rem;
+  gap: 1rem;
 }
 
-/* Logo */
-.navbar .logo {
-  font-size: 1.6rem;
-  font-weight: bold;
-  color: var(--color-text);
+.logo {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.7rem;
 }
 
-/* Links de navegación */
-.navbar nav {
-  display: flex;
-  gap: 1.2rem;
+.logo-badge {
+  width: 40px;
+  height: 40px;
+  border-radius: 12px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-head);
+  font-weight: 800;
+  color: #ffffff;
+  background: linear-gradient(140deg, var(--brand-760), var(--brand-620));
+  box-shadow: 0 10px 24px rgba(25, 98, 101, 0.28);
 }
-.navbar .nav-item {
-  position: relative;
+
+.logo strong {
+  display: block;
+  font-family: var(--font-head);
   font-size: 1rem;
-  color: var(--color-text);
-  text-decoration: none;
-  padding: 0.4rem 0.6rem;
-  border-radius: 0.3rem;
-  transition: background-color 0.2s, color 0.2s;
-}
-.navbar .nav-item:hover {
-  background-color: var(--color-hover);
-  color: var(--color-accent);
+  color: var(--ink-950);
+  line-height: 1.1;
 }
 
-/* Grupo de acciones (botones a la derecha) */
-.navbar .actions {
+.logo small {
+  display: block;
+  color: var(--ink-640);
+  font-size: 0.74rem;
+  letter-spacing: 0.02em;
+}
+
+.navbar-nav {
   display: flex;
   align-items: center;
-  gap: 0.6rem;
+  gap: 0.52rem;
+  flex-wrap: wrap;
 }
 
-/* Botón “Reservar Cita” */
-.navbar .actions .btn-reservar {
-  display: flex;
+.nav-item {
+  border-radius: 999px;
+  padding: 0.42rem 0.82rem;
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: var(--ink-820);
+  transition: background-color 130ms ease, color 130ms ease;
+}
+
+.nav-item:hover,
+.nav-item.active {
+  color: var(--brand-760);
+  background: var(--brand-120);
+}
+
+.nav-cart {
+  display: inline-flex;
   align-items: center;
   gap: 0.4rem;
-  background-color: var(--color-accent);
+}
+
+.cart-count {
+  min-width: 1.25rem;
+  height: 1.25rem;
+  border-radius: 999px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--accent-700);
   color: #ffffff;
-  font-size: 0.95rem;
-  padding: 0.5rem 0.9rem;
-  border: none;
-  border-radius: 1.2rem;
-  cursor: pointer;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-  transition: background-color 0.2s;
-}
-.navbar .actions .btn-reservar:hover {
-  background-color: #FFAAA5;
+  font-size: 0.73rem;
+  font-weight: 800;
 }
 
-/* Iconos de perfil y salir */
-.navbar .actions .icon-btn {
-  background: none;
-  border: none;
-  color: var(--color-text);
-  font-size: 1.3rem;
-  cursor: pointer;
-  padding: 0.4rem;
-  border-radius: 50%;
-  transition: background-color 0.2s;
-}
-.navbar .actions .icon-btn:hover {
-  background-color: var(--color-hover);
-  color: var(--color-accent);
+.dropdown-wrapper {
+  position: relative;
 }
 
-/* Menú hamburguesa móvil */
-.navbar .hamburger {
-  display: none; /* se activará vía media query */
-  font-size: 1.5rem;
-  background: none;
-  border: none;
-  color: var(--color-text);
-  cursor: pointer;
+.nav-reserve {
+  font-size: 0.9rem;
 }
 
-/* Responsive: mostrar hamburguesa y ocultar nav links */
-@media (max-width: 768px) {
-  .navbar nav {
+.hamburger {
+  display: none;
+  border: 1px solid var(--surface-180);
+  border-radius: 999px;
+  padding: 0.45rem 0.92rem;
+  background: var(--surface-0);
+  color: var(--ink-820);
+  font-weight: 700;
+}
+
+@media (max-width: 980px) {
+  .hamburger {
+    display: inline-flex;
+  }
+
+  .navbar-nav {
     display: none;
-  }
-  .navbar .hamburger {
-    display: block;
-  }
-  .navbar nav.open {
-    display: flex;
-    flex-direction: column;
     position: absolute;
-    top: 100%;
-    left: 0;
-    right: 0;
-    background: var(--color-bg);
-    padding: 1rem;
-    gap: 1rem;
-    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    left: 1.1rem;
+    right: 1.1rem;
+    top: 80px;
+    z-index: 200;
+    padding: 0.85rem;
+    border-radius: var(--radius-md);
+    border: 1px solid var(--surface-180);
+    background: rgba(255, 255, 255, 0.98);
+    box-shadow: var(--shadow-card);
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .navbar-nav.open {
+    display: flex;
+  }
+
+  .dropdown-wrapper,
+  .dropdown-wrapper .nav-reserve,
+  .btn-ghost,
+  .nav-item {
+    width: 100%;
+    justify-content: center;
+    text-align: center;
   }
 }

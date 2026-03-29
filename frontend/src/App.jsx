@@ -1,81 +1,100 @@
-// frontend/src/App.jsx
+import React from "react";
+import { BrowserRouter, Route, Routes } from "react-router-dom";
 
-import React from 'react';
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
-
-import { AuthProvider } from './contexts/authContext';
-import { CartProvider } from './contexts/cartContext';
-
-import Navbar from './components/navbar';
-import Footer from './components/footer';
-import PrivateRoute from './components/privateRoute';
-import Home from './pages/home';
-import Login from './pages/login';
-import Register from './pages/register';
-import ReservaCitaForm from './components/reservaCitaForm';
-import MascotaProfile from './pages/mascotaProfile';
-import Farmacia from './pages/farmacia';
-import Carrito from './components/carrito';
-import ReservaResumen from './pages/reservaResumen';
-import ReservaExito from './pages/reservaExito';
-import NotFound from './pages/notFound';
-import PagoReturn from './pages/pagoReturn';
+import "./App.css";
+import Footer from "./components/footer";
+import Navbar from "./components/navbar";
+import PrivateRoute from "./components/privateRoute";
+import Carrito from "./components/carrito";
+import ReservaCitaForm from "./components/reservaCitaForm";
+import { AuthProvider } from "./contexts/authContext";
+import { CartProvider } from "./contexts/cartContext";
+import Farmacia from "./pages/farmacia";
+import Home from "./pages/home";
+import Login from "./pages/login";
+import MascotaProfile from "./pages/mascotaProfile";
+import NotFound from "./pages/notFound";
+import PagoOrdenReturn from "./pages/pagoOrdenReturn";
+import PagoReturn from "./pages/pagoReturn";
+import Perfil from "./pages/perfil";
+import ProductoDetalle from "./pages/productoDetalle";
+import Register from "./pages/register";
+import ReservaExito from "./pages/reservaExito";
+import ReservaResumen from "./pages/reservaResumen";
 
 export default function App() {
   return (
     <BrowserRouter>
       <AuthProvider>
         <CartProvider>
-          <Navbar />
-          <div className="container mx-auto p-4">
-            <Routes>
-              {/* Rutas públicas */}
-              <Route path="/" element={<Home />} />
-              <Route path="/login" element={<Login />} />
-              <Route path="/register" element={<Register />} />
-              <Route path="/reservar/confirmar" element={<ReservaResumen />} />
-              <Route path="/reservar/exito" element={<ReservaExito />} />
-              <Route path="/pago/exito" element={<PagoReturn />} />
+          <div className="app-shell">
+            <Navbar />
+            <main className="main-content">
+              <div className="app-content">
+                <Routes>
+                  <Route path="/" element={<Home />} />
+                  <Route path="/login" element={<Login />} />
+                  <Route path="/register" element={<Register />} />
+                  <Route path="/reservar/confirmar" element={<ReservaResumen />} />
+                  <Route path="/reservar/exito" element={<ReservaExito />} />
+                  <Route path="/pago/exito" element={<PagoReturn />} />
+                  <Route path="/pago/orden/exito" element={<PagoOrdenReturn />} />
 
-              {/* Rutas protegidas con roles */}
-              <Route
-                path="/reservar"
-                element={
-                  <PrivateRoute roles={[ 'cliente' ]}>
-                    <ReservaCitaForm />
-                  </PrivateRoute>
-                }
-              />
-              <Route
-                path="/mascota/:id"
-                element={
-                  <PrivateRoute roles={[ 'cliente', 'veterinario', 'admin' ]}>
-                    <MascotaProfile />
-                  </PrivateRoute>
-                }
-              />
-              <Route
-                path="/farmacia"
-                element={
-                  <PrivateRoute roles={[ 'cliente', 'admin' ]}>
-                    <Farmacia />
-                  </PrivateRoute>
-                }
-              />
-              <Route
-                path="/carrito"
-                element={
-                  <PrivateRoute roles={[ 'cliente', 'admin' ]}>
-                    <Carrito />
-                  </PrivateRoute>
-                }
-              />
+                  <Route
+                    path="/reservar"
+                    element={
+                      <PrivateRoute roles={["cliente"]}>
+                        <ReservaCitaForm />
+                      </PrivateRoute>
+                    }
+                  />
+                  <Route
+                    path="/mascota/:id"
+                    element={
+                      <PrivateRoute roles={["cliente", "veterinario", "admin"]}>
+                        <MascotaProfile />
+                      </PrivateRoute>
+                    }
+                  />
+                  <Route
+                    path="/farmacia"
+                    element={
+                      <PrivateRoute roles={["cliente", "admin"]}>
+                        <Farmacia />
+                      </PrivateRoute>
+                    }
+                  />
+                  <Route
+                    path="/farmacia/:id"
+                    element={
+                      <PrivateRoute roles={["cliente", "admin"]}>
+                        <ProductoDetalle />
+                      </PrivateRoute>
+                    }
+                  />
+                  <Route
+                    path="/carrito"
+                    element={
+                      <PrivateRoute roles={["cliente", "admin"]}>
+                        <Carrito />
+                      </PrivateRoute>
+                    }
+                  />
+                  <Route
+                    path="/perfil"
+                    element={
+                      <PrivateRoute roles={["cliente", "veterinario", "admin"]}>
+                        <Perfil />
+                      </PrivateRoute>
+                    }
+                  />
 
-              {/* Página no encontrada */}
-              <Route path="*" element={<NotFound />} />
-            </Routes>
+                  <Route path="*" element={<NotFound />} />
+                </Routes>
+              </div>
+            </main>
+            <Footer />
           </div>
-          <Footer />
         </CartProvider>
       </AuthProvider>
     </BrowserRouter>

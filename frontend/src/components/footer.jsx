@@ -1,61 +1,42 @@
-import React from 'react';
-import { Link } from 'react-router-dom';
-import '../styles/footer.css';
+import React from "react";
+import { Link } from "react-router-dom";
+
+import "../styles/footer.css";
 
 export default function Footer() {
   return (
     <footer className="footer">
-      {/* Top Section */}
-      <div className="footer-top container mx-auto px-6 py-16 grid grid-cols-1 md:grid-cols-3 gap-8">
-        {/* Company Info */}
-        <div className="footer-col">
-          <div className="logo">Mascota Feliz</div>
-          <p className="footer-desc">
-            Encuentra tu Mascota Feliz más cercano. Te esperamos de lunes a domingo con atención presencial y móvil. Agenda con anticipación y evita aglomeraciones.
+      <div className="footer-top">
+        <section className="footer-brand">
+          <p className="footer-kicker">Mascota Feliz</p>
+          <h3>Atencion veterinaria con criterio clinico y cercania humana.</h3>
+          <p>
+            Agenda online, equipo multidisciplinario y farmacia respaldada por profesionales para cuidar cada etapa de
+            tu mascota.
           </p>
-          <div className="socials">
-            <a href="https://facebook.com" target="_blank" rel="noreferrer" className="social-icon">📘</a>
-            <a href="https://instagram.com" target="_blank" rel="noreferrer" className="social-icon">📸</a>
-          </div>
-        </div>
+          <Link to="/reservar" className="btn-secondary footer-cta">
+            Reservar consulta
+          </Link>
+        </section>
 
-        {/* Links */}
-        <div className="footer-col">
-          <h4 className="footer-heading">Empresa</h4>
-          <ul className="footer-links">
-            <li><a href="#nosotros" className="footer-link">Nosotros</a></li>
-            <li><a href="#servicios" className="footer-link">Servicios</a></li>
-            <li><a href="#contacto" className="footer-link">Contacto</a></li>
-            <li><Link to="/reservar" className="footer-link">Reservar Cita</Link></li>
-          </ul>
-        </div>
+        <section className="footer-col">
+          <h4>Navegacion</h4>
+          <a href="/#servicios">Servicios</a>
+          <a href="/#nosotros">Clinica</a>
+          <a href="/#contacto">Contacto</a>
+          <Link to="/farmacia">Farmacia</Link>
+        </section>
 
-        {/* Contact Info */}
-        <div className="footer-col">
-          <h4 className="footer-heading">Contáctanos</h4>
-          <ul className="contact-info">
-            <li>
-              <span className="contact-label">Dirección:</span>
-              Avenida Ejemplo 123, Santiago, Chile
-            </li>
-            <li>
-              <span className="contact-label">Whatsapp:</span>
-              <a href="https://wa.me/56912345678" className="footer-link">+56 9 1234 5678</a>
-            </li>
-            <li>
-              <span className="contact-label">Email:</span>
-              <a href="mailto:contacto@mascotafeliz.cl" className="footer-link">contacto@mascotafeliz.cl</a>
-            </li>
-          </ul>
-        </div>
+        <section className="footer-col">
+          <h4>Atencion</h4>
+          <p>Urgencias: 24/7</p>
+          <p>Telefono: +56 9 1234 5678</p>
+          <p>Email: contacto@mascotafeliz.cl</p>
+          <p>Av. Manquehue 440, Las Condes</p>
+        </section>
       </div>
 
-      {/* Bottom Bar */}
-      <div className="footer-bottom">
-        <div className="container mx-auto px-6 text-center">
-          <p>© 2025 Mascota Feliz. Todos los derechos reservados.</p>
-        </div>
-      </div>
+      <div className="footer-bottom">2026 Mascota Feliz. Clinica veterinaria y farmacia digital en una sola experiencia.</div>
     </footer>
   );
 }

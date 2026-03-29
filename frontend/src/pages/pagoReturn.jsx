@@ -1,39 +1,59 @@
-import React, { useEffect, useState } from 'react';
-import { useLocation, useNavigate } from 'react-router-dom';
+import React, { useEffect, useState } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
+
+import { apiRequest, extractApiError } from "../services/api";
 
 export default function PagoReturn() {
-  const { search }   = useLocation();
-  const navigate      = useNavigate();
-  const [msg, setMsg] = useState('Confirmando pago…');
+  const { search } = useLocation();
+  const navigate = useNavigate();
+  const [message, setMessage] = useState("Estamos confirmando tu pago...");
 
   useEffect(() => {
-    const params   = new URLSearchParams(search);
-    const token_ws = params.get('token_ws');
-    if (!token_ws) {
-      setMsg('token_ws faltante'); return;
+    const params = new URLSearchParams(search);
+    const tokenWs = params.get("token_ws");
+
+    if (!tokenWs) {
+      navigate("/reservar/confirmar", {
+        replace: true,
+        state: {
+          estado_pago: "FAILED",
+          detalle: "No se recibio token de confirmacion.",
+        },
+      });
+      return;
     }
 
-    (async () => {
-      try {
-        // NO usamos fetchWithAuth: este endpoint es público
-        const raw  = await fetch('/api/pago/commit/', {
-          method : 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body   : JSON.stringify({ token_ws }),
+    const confirmPayment = async () => {
+      const response = await apiRequest("/pago/commit/", {
+        method: "POST",
+        body: { token_ws: tokenWs },
+      });
+
+      if (response.ok) {
+        navigate("/reservar/confirmar", {
+          replace: true,
+          state: response.data,
         });
-        const data = await raw.json();
-
-        if (raw.status === 200) {
-          navigate('/reservar/confirmar', { state: data });
-          return;
-        }
-        throw new Error(data.detail);
-      } catch (e) {
-        console.error(e);
-        setMsg('No se pudo confirmar el pago.');
+        return;
       }
-    })();
-  }, [search, navigate]);
 
-  return <h2 style={{ textAlign: 'center' }}>{msg}</h2>;
+      setMessage("No se pudo confirmar el pago.");
+      navigate("/reservar/confirmar", {
+        replace: true,
+        state: {
+          ...(response.data || {}),
+          estado_pago: "FAILED",
+          detalle: extractApiError(response.data, "No se pudo confirmar el pago."),
+        },
+      });
+    };
+
+    confirmPayment();
+  }, [navigate, search]);
+
+  return (
+    <div className="page-shell" style={{ maxWidth: "520px", margin: "0 auto" }}>
+      <h2>{message}</h2>
+    </div>
+  );
 }

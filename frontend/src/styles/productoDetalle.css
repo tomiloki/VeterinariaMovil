@@ -1,0 +1,259 @@
+.producto-wrapper {
+  display: grid;
+  gap: 0.86rem;
+}
+
+.producto-page {
+  display: grid;
+  grid-template-columns: minmax(280px, 420px) minmax(320px, 1fr);
+  gap: 1rem;
+  align-items: start;
+}
+
+.producto-image-wrap {
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  border: 1px solid var(--surface-180);
+  background: rgba(255, 255, 255, 0.72);
+}
+
+.producto-image-wrap img {
+  width: 100%;
+  height: 100%;
+  max-height: 450px;
+  object-fit: cover;
+}
+
+.producto-content {
+  display: grid;
+  gap: 0.72rem;
+}
+
+.producto-back {
+  color: var(--brand-760);
+  font-weight: 700;
+  font-size: 0.88rem;
+}
+
+.producto-content h1 {
+  font-size: clamp(1.45rem, 3.2vw, 2rem);
+  line-height: 1.2;
+}
+
+.producto-desc {
+  color: var(--ink-820);
+}
+
+.producto-description-extra {
+  border: 1px solid var(--surface-180);
+  border-radius: var(--radius-md);
+  background: rgba(255, 255, 255, 0.78);
+  padding: 0.62rem 0.68rem;
+  color: var(--ink-820);
+}
+
+.med-category {
+  justify-self: start;
+  border-radius: 999px;
+  padding: 0.22rem 0.6rem;
+  font-size: 0.7rem;
+  font-weight: 800;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+  border: 1px solid transparent;
+}
+
+.med-category.parasitarios {
+  color: #785508;
+  background: #fff3d7;
+  border-color: #eccd81;
+}
+
+.med-category.dermatologia {
+  color: #5d3564;
+  background: #f8eafc;
+  border-color: #dcb7eb;
+}
+
+.med-category.antibioticos {
+  color: #8e4022;
+  background: #fde8de;
+  border-color: #f4c3ac;
+}
+
+.med-category.analgesia {
+  color: #7e3444;
+  background: #fce5e9;
+  border-color: #f2bcc7;
+}
+
+.med-category.nutricion {
+  color: #1b5f5b;
+  background: #def3ee;
+  border-color: #9adcd4;
+}
+
+.med-category.insumos,
+.med-category.general {
+  color: #334e6f;
+  background: #e5eefc;
+  border-color: #b8cef0;
+}
+
+.producto-meta {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(120px, 1fr));
+  gap: 0.58rem;
+}
+
+.producto-meta div {
+  border: 1px solid var(--surface-180);
+  border-radius: var(--radius-md);
+  background: rgba(255, 255, 255, 0.78);
+  padding: 0.65rem;
+  display: grid;
+  gap: 0.2rem;
+}
+
+.producto-meta span {
+  color: var(--ink-640);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  font-size: 0.75rem;
+  font-weight: 700;
+}
+
+.producto-meta strong {
+  color: var(--ink-950);
+}
+
+.producto-trust {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.38rem;
+}
+
+.producto-trust span {
+  border: 1px solid rgba(25, 98, 101, 0.28);
+  border-radius: 999px;
+  background: rgba(217, 241, 242, 0.72);
+  color: var(--brand-760);
+  padding: 0.23rem 0.58rem;
+  font-size: 0.77rem;
+  font-weight: 700;
+}
+
+.producto-qty {
+  width: min(190px, 100%);
+  display: grid;
+  gap: 0.28rem;
+}
+
+.producto-qty label {
+  color: var(--ink-820);
+  font-weight: 700;
+  font-size: 0.88rem;
+}
+
+.producto-actions {
+  display: flex;
+  gap: 0.54rem;
+  flex-wrap: wrap;
+}
+
+.producto-notice {
+  color: var(--success-700);
+  font-weight: 700;
+}
+
+.producto-clinical {
+  border: 1px solid var(--surface-180);
+  border-radius: var(--radius-md);
+  background: rgba(255, 255, 255, 0.8);
+  padding: 0.78rem;
+  display: grid;
+  gap: 0.45rem;
+}
+
+.producto-clinical h2 {
+  font-size: 1.02rem;
+}
+
+.producto-clinical ul {
+  margin: 0;
+  padding-left: 1rem;
+  color: var(--ink-820);
+  display: grid;
+  gap: 0.26rem;
+}
+
+.producto-advice {
+  color: var(--ink-820);
+  font-size: 0.9rem;
+}
+
+.producto-relacionados {
+  display: grid;
+  gap: 0.62rem;
+}
+
+.producto-relacionados h2 {
+  font-size: 1.18rem;
+}
+
+.producto-rel-grid {
+  display: grid;
+  gap: 0.64rem;
+  grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+}
+
+.producto-rel-card {
+  border: 1px solid var(--surface-180);
+  border-radius: var(--radius-md);
+  background: rgba(255, 255, 255, 0.78);
+  padding: 0.65rem;
+  display: grid;
+  gap: 0.5rem;
+}
+
+.producto-rel-card img {
+  width: 100%;
+  height: 135px;
+  object-fit: cover;
+  border-radius: var(--radius-sm);
+}
+
+.producto-rel-card h3 {
+  font-size: 0.98rem;
+}
+
+.producto-rel-card p {
+  margin: 0.2rem 0;
+  color: var(--ink-640);
+  font-size: 0.85rem;
+}
+
+.producto-rel-card strong {
+  color: var(--ink-950);
+}
+
+.producto-rel-actions {
+  display: flex;
+  gap: 0.4rem;
+}
+
+.producto-rel-actions .btn-ghost,
+.producto-rel-actions .btn-secondary {
+  font-size: 0.84rem;
+  padding: 0.4rem 0.64rem;
+}
+
+@media (max-width: 900px) {
+  .producto-page {
+    grid-template-columns: 1fr;
+  }
+
+  .producto-image-wrap img {
+    max-height: 340px;
+  }
+}
