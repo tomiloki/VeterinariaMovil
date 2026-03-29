@@ -1,32 +1,34 @@
-/* footer.css - Warm Pet Care theme */
+/* src/styles/footer.css */
+
+/* Variables de color “Warm & Friendly” */
 :root {
-  --clr-footer-bg: #023047;
-  --clr-footer-text: #F8F8F8;
-  --clr-btn-primary: #FFB703;
-  --clr-btn-primary-hover: #FB8500;
+  --clr-footer-bg:   #A8E6CF; /* verde pastel claro igual que el hero */
+  --clr-footer-text: #37474F; /* gris oscuro suave */
+  --clr-accent:      #FF8C94; /* rosa pastel */
+  --clr-hover:       #FFD3B6; /* durazno claro */
 }
 
-/* Base Footer Styles */
+/* Footer base */
 .footer {
   background-color: var(--clr-footer-bg);
   color: var(--clr-footer-text);
-  font-family: 'Inter', sans-serif;
+  font-family: 'Helvetica Neue', Arial, sans-serif;
 }
 
-/* Top Section: grid columns */
+/* Sección superior */
 .footer-top {
   display: grid;
   grid-template-columns: 1fr;
-  gap: 2rem;
-  padding: 4rem 1rem;
+  gap: 1.5rem;
+  padding: 1.5rem 1rem;
 }
-
 @media (min-width: 768px) {
   .footer-top {
     grid-template-columns: repeat(3, 1fr);
   }
 }
 
+/* Columnas */
 .footer-col {
   display: flex;
   flex-direction: column;
@@ -34,26 +36,27 @@
 }
 
 /* Logo */
-.logo {
+.footer .logo {
   font-size: 1.5rem;
-  font-weight: 700;
-  color: var(--clr-btn-primary);
+  font-weight: bold;
+  color: var(--clr-accent);
 }
 
-/* Description */
+/* Descripción */
 .footer-desc {
-  color: #ccc;
   line-height: 1.6;
+  opacity: 0.85;
 }
 
-/* Social Icons */
+/* Iconos sociales */
 .socials {
   display: flex;
   gap: 0.75rem;
 }
 .social-icon {
-  background-color: var(--clr-btn-primary);
-  color: var(--clr-footer-bg);
+  font-size: 1.2rem;
+  background-color: var(--clr-accent);
+  color: #fff;
   width: 2.5rem;
   height: 2.5rem;
   display: flex;
@@ -61,19 +64,20 @@
   justify-content: center;
   border-radius: 50%;
   text-decoration: none;
-  transition: background 0.2s;
+  transition: background-color 0.2s;
 }
 .social-icon:hover {
-  background-color: var(--clr-btn-primary-hover);
+  background-color: var(--clr-hover);
 }
 
-/* Links Column */
+/* Encabezados de columna */
 .footer-heading {
   font-size: 1.25rem;
   font-weight: 600;
-  color: var(--clr-btn-primary);
-  margin-bottom: 0.75rem;
+  color: var(--clr-accent);
 }
+
+/* Enlaces */
 .footer-links,
 .contact-info {
   list-style: none;
@@ -84,14 +88,13 @@
   color: var(--clr-footer-text);
   text-decoration: none;
   margin-bottom: 0.5rem;
-  display: block;
   transition: color 0.2s;
 }
 .footer-link:hover {
-  color: var(--clr-btn-primary);
+  color: var(--clr-accent);
 }
 
-/* Contact Info */
+/* Información de contacto */
 .contact-info li {
   display: flex;
   gap: 0.5rem;
@@ -102,14 +105,19 @@
   font-weight: 600;
 }
 
-/* Bottom Bar */
+/* Barra inferior */
 .footer-bottom {
-  background-color: var(--clr-btn-primary);
-  color: var(--clr-btn-text);
+  background-color: var(--clr-accent);
+  color: #fff;
 }
 .footer-bottom .container {
-  padding: 1rem 0;
+  padding: 0.8rem 1rem;
+  text-align: center;
+  font-size: 0.9rem;
 }
-.footer-bottom p {
-  margin: 0;
+
+/* Utilitario de contenedor */
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
 }

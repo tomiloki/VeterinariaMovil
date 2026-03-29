@@ -1,6 +1,5 @@
-// frontend/src/components/Footer.jsx
 import React from 'react';
-import { NavLink } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import '../styles/footer.css';
 
 export default function Footer() {
@@ -24,10 +23,10 @@ export default function Footer() {
         <div className="footer-col">
           <h4 className="footer-heading">Empresa</h4>
           <ul className="footer-links">
-            <li><NavLink to="/#nosotros" className="footer-link">Nosotros</NavLink></li>
-            <li><NavLink to="/#servicios" className="footer-link">Servicios</NavLink></li>
-            <li><NavLink to="/#contacto" className="footer-link">Contacto</NavLink></li>
-            <li><NavLink to="/reservar" className="footer-link">Reservar Cita</NavLink></li>
+            <li><a href="#nosotros" className="footer-link">Nosotros</a></li>
+            <li><a href="#servicios" className="footer-link">Servicios</a></li>
+            <li><a href="#contacto" className="footer-link">Contacto</a></li>
+            <li><Link to="/reservar" className="footer-link">Reservar Cita</Link></li>
           </ul>
         </div>
 
@@ -58,5 +57,5 @@ export default function Footer() {
         </div>
       </div>
     </footer>
-);
+  );
 }

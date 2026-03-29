@@ -1,90 +1,63 @@
-/* frontend/src/styles/reservaResumen.css */
-
-/* Contenedor de toda la página */
-.resumen-page {
-  min-height: 100vh;
-  padding: 2rem 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: linear-gradient(90deg, #ffb703 60%, #fb8500 100%);
+/* ---------- RESUMEN CITA (paleta menta-celeste) ---------- */
+:root {
+  --grad-1: #E3F7FB;
+  --grad-2: #A8E6CF;
+  --color-card-bg: #FFFFFF;
+  --color-text-dark: #37474F;
+  --color-accent: #FFA7B5;
+  --color-error: #E63946;
 }
 
-/* Tarjeta que agrupa el resumen */
+.resumen-page {
+  min-height: 100vh;
+  display: flex; align-items: center; justify-content: center;
+  background: linear-gradient(180deg, var(--grad-1) 0%, var(--grad-2) 100%);
+  padding: 2rem 1rem;
+  font-family: Helvetica, Arial, sans-serif;
+}
+
 .resumen-card {
-  background: #fff;
+  width: 100%; max-width: 500px;
+  background: var(--color-card-bg);
   padding: 2rem;
-  border-radius: 0.8rem;
-  box-shadow: 0 4px 24px rgba(2, 48, 71, 0.1);
-  max-width: 500px;
-  width: 90%;
+  border-radius: 1rem;
+  box-shadow: 0 6px 26px rgba(55,71,79,.12);
 }
 
 .resumen-card h2 {
-  margin-bottom: 1.5rem;
-  color: #023047;
-  font-size: 1.8rem;
-  text-align: center;
+  text-align: center; color: var(--color-text-dark);
+  font-size: 1.8rem; margin-bottom: 1.4rem;
 }
 
-.resumen-card ul {
-  list-style: none;
-  padding: 0;
-  margin: 0 0 1.5rem;
+.resumen-details { list-style: none; padding: 0; margin: 0 0 1.5rem; }
+.resumen-details li {
+  margin-bottom: .8rem; font-size: 1rem; color: var(--color-text-dark);
 }
 
-.resumen-card li {
-  margin-bottom: 0.75rem;
-  font-size: 1rem;
-  color: #1f2937;
-}
+/* Error */
+.error-text { color: var(--color-error); text-align: center; margin-bottom: 1rem; }
 
-/* Mensaje de error inline */
-.error-text {
-  color: #e63946;
-  font-size: 0.9rem;
-  margin-bottom: 1rem;
-  text-align: center;
-}
-
-/* Contenedor de botones */
-.resumen-buttons {
-  display: flex;
-  justify-content: space-between;
-  gap: 1rem;
-}
-
-/* Botones generales */
+/* Botones */
+.resumen-buttons { display: flex; gap: 1rem; }
 .resumen-buttons button {
-  flex: 1;
-  padding: 0.75rem 1rem;
-  font-size: 1rem;
-  font-weight: 600;
-  border: 1.5px solid transparent;
-  border-radius: 0.6rem;
-  cursor: pointer;
-  transition: background 0.2s, color 0.2s;
+  flex: 1; padding: .75rem 1rem; font-weight: 600; font-size: 1rem;
+  border-radius: .8rem; cursor: pointer; transition: filter .18s;
 }
 
-/* Botón “Volver” */
-.resumen-buttons button:not(.btn-confirm) {
-  background: #fff;
-  color: #023047;
-  border-color: #ffb703;
+/* Volver */
+.btn-back {
+  background: #fff; color: var(--color-text-dark);
+  border: 2px solid var(--grad-1);
 }
-.resumen-buttons button:not(.btn-confirm):hover {
-  background: #ffb703;
-  color: #fff;
-}
+.btn-back:hover { background: var(--grad-1); color: #fff; }
 
-/* Botón “Confirmar” */
+/* Confirmar */
 .btn-confirm {
-  background: linear-gradient(90deg, #ffb703 60%, #fb8500 100%);
-  color: #023047;
-  border: none;
-  box-shadow: 0 2px 12px rgba(251, 133, 0, 0.3);
+  background: var(--color-accent); color: #fff; border: none;
+  box-shadow: 0 2px 12px rgba(255,167,181,.45);
 }
-.btn-confirm:hover {
-  background: linear-gradient(90deg, #fb8500 40%, #ffb703 100%);
-  color: #fff;
+.btn-confirm:hover { filter: brightness(1.05); }
+
+@media (max-width: 420px) {
+  .resumen-card { padding: 1.5rem; }
 }

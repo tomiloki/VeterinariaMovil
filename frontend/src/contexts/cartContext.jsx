@@ -1,33 +1,97 @@
-import React, { createContext, useContext, useState } from 'react';
+// src/contexts/cartContext.jsx
+import React, { createContext, useState, useEffect, useContext } from 'react';
+import { useAuth } from './authContext';
 
-const CartContext = createContext();
+export const CartContext = createContext();
+const API_URL = import.meta.env.VITE_API_URL;
 
-export function useCart() {
-  return useContext(CartContext);
-}
+export const CartProvider = ({ children }) => {
+  const { fetchWithAuth, logout } = useAuth();
+  const [cartItems, setCartItems] = useState(() => {
+    try {
+      return JSON.parse(localStorage.getItem('cart')) || [];
+    } catch {
+      return [];
+    }
+  });
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
 
-export function CartProvider({ children }) {
-  const [items, setItems] = useState([]);
+  // Persistir carrito en localStorage
+  useEffect(() => {
+    localStorage.setItem('cart', JSON.stringify(cartItems));
+  }, [cartItems]);
 
-  const addItem = (medicamento) => {
-    setItems(prev =>
-      prev.some(item => item.id === medicamento.id)
-        ? prev.map(item =>
-            item.id === medicamento.id
-              ? { ...item, cantidad: item.cantidad + 1 }
-              : item
-          )
-        : [...prev, { ...medicamento, cantidad: 1 }]
+  const addToCart = (medicamento, cantidad = 1) => {
+    setCartItems(prev => {
+      const exists = prev.find(item => item.medicamento === medicamento.id);
+      if (exists) {
+        return prev.map(item =>
+          item.medicamento === medicamento.id
+            ? { ...item, cantidad: item.cantidad + cantidad }
+            : item
+        );
+      }
+      return [
+        ...prev,
+        { medicamento: medicamento.id, nombre: medicamento.nombre, cantidad },
+      ];
+    });
+  };
+
+  const removeFromCart = medicamentoId => {
+    setCartItems(prev =>
+      prev.filter(item => item.medicamento !== medicamentoId)
     );
   };
 
-  const removeItem = (id) => setItems(prev => prev.filter(item => item.id !== id));
+  const clearCart = () => setCartItems([]);
 
-  const clearCart = () => setItems([]);
+  const submitOrder = async () => {
+    setLoading(true);
+    setError(null);
+    try {
+      const { data } = await fetchWithAuth('/ordenes/', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          items: cartItems.map(item => ({
+            medicamento: item.medicamento,
+            cantidad: item.cantidad,
+          })),
+        }),
+      });
+      clearCart();
+      return data;
+    } catch (err) {
+      if (err.message.includes('Sesión expirada')) logout();
+      else setError(err.message);
+      throw err;
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
-    <CartContext.Provider value={{ items, addItem, removeItem, clearCart }}>
+    <CartContext.Provider
+      value={{
+        cartItems,
+        addToCart,
+        removeFromCart,
+        clearCart,
+        submitOrder,
+        loading,
+        error,
+      }}
+    >
       {children}
     </CartContext.Provider>
   );
-}
+};
+
+export const useCart = () => {
+  const context = useContext(CartContext);
+  if (!context)
+    throw new Error('useCart debe usarse dentro de CartProvider');
+  return context;
+};

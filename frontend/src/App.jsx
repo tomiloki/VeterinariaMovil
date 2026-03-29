@@ -1,7 +1,7 @@
 // frontend/src/App.jsx
 
 import React from 'react';
-import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
 
 import { AuthProvider } from './contexts/authContext';
 import { CartProvider } from './contexts/cartContext';
@@ -16,30 +16,32 @@ import ReservaCitaForm from './components/reservaCitaForm';
 import MascotaProfile from './pages/mascotaProfile';
 import Farmacia from './pages/farmacia';
 import Carrito from './components/carrito';
-import ReservaResumen    from './pages/ReservaResumen';
-import ReservaExito      from './pages/reservaExito';
-// import AdminPanel from './pages/AdminPanel'; // si lo tienes
+import ReservaResumen from './pages/reservaResumen';
+import ReservaExito from './pages/reservaExito';
+import NotFound from './pages/notFound';
+import PagoReturn from './pages/pagoReturn';
 
 export default function App() {
   return (
-    <AuthProvider>
-      <CartProvider>
-        <BrowserRouter>
+    <BrowserRouter>
+      <AuthProvider>
+        <CartProvider>
           <Navbar />
           <div className="container mx-auto p-4">
             <Routes>
-              {/* Públicas */}
+              {/* Rutas públicas */}
               <Route path="/" element={<Home />} />
               <Route path="/login" element={<Login />} />
               <Route path="/register" element={<Register />} />
               <Route path="/reservar/confirmar" element={<ReservaResumen />} />
               <Route path="/reservar/exito" element={<ReservaExito />} />
+              <Route path="/pago/exito" element={<PagoReturn />} />
 
-              {/* Rutas protegidas */}
+              {/* Rutas protegidas con roles */}
               <Route
                 path="/reservar"
                 element={
-                  <PrivateRoute roles={['cliente']}>
+                  <PrivateRoute roles={[ 'cliente' ]}>
                     <ReservaCitaForm />
                   </PrivateRoute>
                 }
@@ -47,7 +49,7 @@ export default function App() {
               <Route
                 path="/mascota/:id"
                 element={
-                  <PrivateRoute roles={['cliente','veterinario','admin']}>
+                  <PrivateRoute roles={[ 'cliente', 'veterinario', 'admin' ]}>
                     <MascotaProfile />
                   </PrivateRoute>
                 }
@@ -55,7 +57,7 @@ export default function App() {
               <Route
                 path="/farmacia"
                 element={
-                  <PrivateRoute roles={['cliente','admin']}>
+                  <PrivateRoute roles={[ 'cliente', 'admin' ]}>
                     <Farmacia />
                   </PrivateRoute>
                 }
@@ -63,18 +65,19 @@ export default function App() {
               <Route
                 path="/carrito"
                 element={
-                  <PrivateRoute roles={['cliente','admin']}>
+                  <PrivateRoute roles={[ 'cliente', 'admin' ]}>
                     <Carrito />
                   </PrivateRoute>
                 }
               />
-              {/* Catch-all */}
-              <Route path="*" element={<Navigate to="/" replace />} />
+
+              {/* Página no encontrada */}
+              <Route path="*" element={<NotFound />} />
             </Routes>
-            <Footer />
           </div>
-        </BrowserRouter>
-      </CartProvider>
-    </AuthProvider>
+          <Footer />
+        </CartProvider>
+      </AuthProvider>
+    </BrowserRouter>
   );
 }

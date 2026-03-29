@@ -1,51 +1,63 @@
-import React from 'react';
+// frontend/src/components/carrito.jsx
+import React, { useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useCart } from '../contexts/cartContext';
-import api from '../services/api';
 import '../styles/carrito.css';
 
 export default function Carrito() {
-  const { items, removeItem, clearCart } = useCart();
+  const { cartItems, removeFromCart, clearCart, submitOrder, loading, error } = useCart();
+  const navigate = useNavigate();
+
+  const total = cartItems.reduce((sum, item) => sum + item.cantidad * item.precio, 0);
+
+  useEffect(() => {
+    if (!loading && !error && cartItems.length === 0) {
+      // Opcional: navegar a éxito o mostrar mensaje tras compra
+      // navigate('/reservar/exito');
+    }
+  }, [loading, error, cartItems, navigate]);
 
   const handleComprar = async () => {
     try {
-      // Simulación de compra (ajusta los campos reales según tu backend)
-      const payload = {
-        cliente: 1, // ID del cliente, ajústalo si tienes login
-        items: items.map(it => ({
-          medicamento_id: it.id,
-          cantidad: it.cantidad,
-        })),
-        total: items.reduce((sum, it) => sum + it.precio * it.cantidad, 0),
-      };
-      await api.post('ordenes/', payload);
+      await submitOrder();
       clearCart();
-      alert('¡Compra realizada!');
+      navigate('/reservar/exito');
     } catch {
-      alert('Error al procesar la compra');
+      // El error ya está manejado en el contexto
     }
   };
+
+  if (cartItems.length === 0) {
+    return (
+      <div className="carrito-container">
+        <h2>Carrito</h2>
+        <p>No hay productos en el carrito.</p>
+      </div>
+    );
+  }
 
   return (
     <div className="carrito-container">
       <h2>Carrito</h2>
-      {items.length === 0 ? (
-        <p>No hay productos en el carrito.</p>
-      ) : (
-        <>
-          <ul>
-            {items.map(item => (
-              <li key={item.id}>
-                {item.nombre} x{item.cantidad} - ${item.precio * item.cantidad}
-                <button onClick={() => removeItem(item.id)}>Eliminar</button>
-              </li>
-            ))}
-          </ul>
-          <p>
-            <b>Total: ${items.reduce((sum, it) => sum + it.precio * it.cantidad, 0)}</b>
-          </p>
-          <button onClick={handleComprar}>Comprar</button>
-        </>
-      )}
+      {error && <div className="error-msg">{error}</div>}
+      <ul className="carrito-list">
+        {cartItems.map(item => (
+          <li key={item.medicamento} className="carrito-item">
+            <span>{item.nombre}</span>
+            <span>x{item.cantidad}</span>
+            <span>${(item.cantidad * item.precio).toFixed(2)}</span>
+            <button onClick={() => removeFromCart(item.medicamento)} disabled={loading}>
+              Eliminar
+            </button>
+          </li>
+        ))}
+      </ul>
+      <p className="carrito-total">
+        <strong>Total: ${total.toFixed(2)}</strong>
+      </p>
+      <button onClick={handleComprar} className="carrito-btn" disabled={loading}>
+        {loading ? 'Procesando...' : 'Comprar'}
+      </button>
     </div>
   );
 }

@@ -1,40 +1,51 @@
-// frontend/src/pages/ReservaCitaForm.jsx
-import React, { useState, useEffect } from 'react';
+// src/components/reservaCitaForm.jsx
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import api from '../services/api';
 import { useAuth } from '../contexts/authContext';
 import '../styles/reservaCitaForm.css';
 
+const OPCIONES_SUBSERVICIO = [
+  { value: 'revision', label: 'Revisión clínica' },
+  { value: 'aseo',     label: 'Arreglos y aseo' },
+  { value: 'cirugia',  label: 'Intervenciones quirúrgicas' },
+];
+
 export default function ReservaCitaForm() {
-  const { user } = useAuth();
+  const { user, fetchWithAuth, logout } = useAuth();
   const navigate = useNavigate();
 
-  // ESTADOS
-  const [tipoCita, setTipoCita]           = useState('presencial');
-  const [subservicio, setSubservicio]     = useState('');
-  const [petNombre, setPetNombre]         = useState('');
-  const [petEspecie, setPetEspecie]       = useState('');
-  const [petRaza, setPetRaza]             = useState('');
-  const [fecha, setFecha]                 = useState('');
-  const [motivo, setMotivo]               = useState('');
+  // Estados de formulario
+  const [tipoCita, setTipoCita]       = useState('presencial');
+  const [subservicio, setSubservicio] = useState('revision');
+  const [petNombre, setPetNombre]     = useState('');
+  const [petEspecie, setPetEspecie]   = useState('');
+  const [petRaza, setPetRaza]         = useState('');
+  // NUEVOS: edad y peso
+  const [petEdad, setPetEdad]         = useState('');
+  const [petPeso, setPetPeso]         = useState('');
 
-  const [error, setError]     = useState('');
-  const [loading, setLoading] = useState(false);
+  const [fecha, setFecha]             = useState('');
+  const [motivo, setMotivo]           = useState('');
+  const [error, setError]             = useState('');
+  const [loading, setLoading]         = useState(false);
 
-  // MAPA para etiqueta legible de servicio
   const labels = {
-    revision:    'Revisión clínica',
-    aseo:        'Arreglos y aseo',
-    quirurgico:  'Intervenciones quirúrgicas',
+    revision:   'Revisión clínica',
+    aseo:       'Arreglos y aseo',
+    quirurgico: 'Intervenciones quirúrgicas',
   };
+  const servicios = Object.keys(labels);
 
   const handleSubmit = async e => {
     e.preventDefault();
-    console.log('🔔 handleSubmit invocado');
-    console.log({ tipoCita, subservicio, petNombre, petEspecie, petRaza, fecha, motivo, user });
-    // VALIDACIONES
+
+    console.log('[ReservaCitaForm] Submitting:', {
+      tipoCita, subservicio, petNombre, petEspecie, petRaza, petEdad, petPeso, fecha, motivo
+    });
+
+    // Validaciones básicas
     if (!subservicio) {
-      setError('Selecciona un tipo de servicio.');
+      setError('Selecciona un servicio.');
       return;
     }
     if (!petNombre || !petEspecie) {
@@ -45,6 +56,14 @@ export default function ReservaCitaForm() {
       setError('Indica la raza de tu perro.');
       return;
     }
+    if (!petEdad) {
+      setError('Ingresa la edad de la mascota.');
+      return;
+    }
+    if (!petPeso) {
+      setError('Ingresa el peso de la mascota.');
+      return;
+    }
     if (!fecha) {
       setError('Debes escoger fecha y hora.');
       return;
@@ -53,75 +72,107 @@ export default function ReservaCitaForm() {
     setLoading(true);
 
     try {
-      // 1) Crear Mascota incluyendo usuario
-      const { data: mascota } = await api.post('mascotas/', {
+      // 1) Crear Mascota
+      const mascotaPayload = {
         nombre:  petNombre,
         especie: petEspecie,
         raza:    petEspecie === 'perro' ? petRaza : '',
-        usuario: user.id,            // ← aquí
+        edad:    Number(petEdad),
+        peso:    Number(petPeso),
+      };
+      console.log('[ReservaCitaForm] Mascota payload:', mascotaPayload);
+
+      const { data: mascota } = await fetchWithAuth('/mascotas/', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(mascotaPayload),
       });
+      console.log('[ReservaCitaForm] Mascota creada:', mascota);
 
       // 2) Crear Cita
-      await api.post('citas/', {
+      const citaPayload = {
         fecha,
         tipo:        tipoCita,
         subservicio,
         mascota:     mascota.id,
         motivo,
-        direccion:   tipoCita === 'movil' ? user.direccion : ''
-      });
+        ...(tipoCita === 'movil' && { direccion: user.direccion }),
+      };
+      console.log('[ReservaCitaForm] Cita payload:', citaPayload);
 
-      navigate('/reserva-exito');
-    } catch {
-      setError('Error al reservar. Intenta de nuevo.');
+      const { data: cita } = await fetchWithAuth('/citas/', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(citaPayload),
+      });
+      console.log('[ReservaCitaForm] Cita creada:', cita);
+
+      navigate('/reservar/exito', {
+        state: {
+          citaId: cita.id,        // aquí el ID que necesitaremos luego
+          tipo: tipoCita,
+          mascota: mascota.nombre, // o mascota.id si prefieres
+          fecha,
+          motivo,
+          ...(tipoCita === 'movil' && { direccion: user.direccion }),
+        }
+      });
+    } catch (err) {
+      console.error('[ReservaCitaForm] Error durante reserva:', err);
+      // Si es 401, forzamos logout
+      if (err.message.includes('Sesión expirada')) {
+        logout();
+        return;
+      }
+      setError(err.message);
     } finally {
       setLoading(false);
+      console.log('[ReservaCitaForm] handleSubmit terminado');
     }
   };
 
   return (
-    <form className="reserva-form" onSubmit={handleSubmit}>
+    <form className="reserva-form" onSubmit={handleSubmit} noValidate>
       <h2>Reservar Cita</h2>
 
-      {/* 1. Selección de Presencial vs Móvil */}
+      {/* Tipo de cita */}
       <div className="field-group tipo-group">
         <label>Tipo de cita:</label>
-        <div className="radio-group">
-          <label>
-            <input
-              type="radio"
-              value="presencial"
-              checked={tipoCita === 'presencial'}
-              onChange={() => setTipoCita('presencial')}
-            /> Presencial
-          </label>
-          <label>
-            <input
-              type="radio"
-              value="movil"
-              checked={tipoCita === 'movil'}
-              onChange={() => setTipoCita('movil')}
-            /> Móvil
-          </label>
-        </div>
+        <label>
+          <input
+            type="radio"
+            value="presencial"
+            checked={tipoCita === 'presencial'}
+            onChange={() => setTipoCita('presencial')}
+          /> Presencial
+        </label>
+        <label>
+          <input
+            type="radio"
+            value="movil"
+            checked={tipoCita === 'movil'}
+            onChange={() => setTipoCita('movil')}
+          /> Móvil
+        </label>
       </div>
 
-      {/* 2. Subservicio */}
+      {/* Servicio */}
       <div className="field-group">
         <label htmlFor="subservicio">Servicio:</label>
         <select
           id="subservicio"
           value={subservicio}
-          onChange={e => setSubservicio(e.target.value)}
+          onChange={(e) => setSubservicio(e.target.value)}
         >
-          <option value="">-- Selecciona servicio --</option>
-          <option value="revision">Revisión clínica</option>
-          <option value="aseo">Arreglos y aseo</option>
-          <option value="quirurgico">Interv. quirúrgicas</option>
+          {OPCIONES_SUBSERVICIO.map((o) => (
+            <option key={o.value} value={o.value}>
+              {o.label}
+            </option>
+          ))}
         </select>
       </div>
 
-      {/* 3. Datos mascota */}
+      {/* Datos de la mascota */}
       <div className="field-group">
         <label htmlFor="petNombre">Nombre mascota:</label>
         <input
@@ -152,12 +203,37 @@ export default function ReservaCitaForm() {
             type="text"
             value={petRaza}
             onChange={e => setPetRaza(e.target.value)}
-            placeholder="Ej: Labrador"
+            placeholder="Ej: Chihuahua"
           />
         </div>
       )}
 
-      {/* 4. Fecha y motivo */}
+      {/* Edad y Peso obligatorios */}
+      <div className="field-group">
+        <label htmlFor="petEdad">Edad (años):</label>
+        <input
+          id="petEdad"
+          type="number"
+          min="0"
+          value={petEdad}
+          onChange={e => setPetEdad(e.target.value)}
+          placeholder="Ej: 3"
+        />
+      </div>
+      <div className="field-group">
+        <label htmlFor="petPeso">Peso (kg):</label>
+        <input
+          id="petPeso"
+          type="number"
+          min="0"
+          step="0.1"
+          value={petPeso}
+          onChange={e => setPetPeso(e.target.value)}
+          placeholder="Ej: 4.5"
+        />
+      </div>
+
+      {/* Fecha y motivo */}
       <div className="field-group">
         <label htmlFor="fecha">Fecha y hora:</label>
         <input
@@ -174,23 +250,26 @@ export default function ReservaCitaForm() {
           rows="3"
           value={motivo}
           onChange={e => setMotivo(e.target.value)}
-          placeholder="¿Por qué vienes?"
+          placeholder="Describe el motivo de la visita"
         />
       </div>
 
-      {/* 5. Resumen dinámico */}
+      {/* Vista previa */}
       <div className="detail-group">
         <h3>Tu reserva</h3>
         <ul>
           <li><strong>Tipo:</strong> {tipoCita === 'movil' ? 'Móvil' : 'Presencial'}</li>
           <li><strong>Servicio:</strong> {labels[subservicio] || '—'}</li>
-          <li><strong>Mascota:</strong> {petNombre || '—'} ({petEspecie || '—'})</li>
-          {petEspecie==='perro' && <li><strong>Raza:</strong> {petRaza || '—'}</li>}
+          <li><strong>Nombre mascota:</strong> {petNombre || '—'}</li>
+          <li><strong>Especie:</strong> {petEspecie || '—'}</li>
+          {petEspecie === 'perro' && <li><strong>Raza:</strong> {petRaza || '—'}</li>}
+          <li><strong>Edad:</strong> {petEdad || '—'} años</li>
+          <li><strong>Peso:</strong> {petPeso || '—'} kg</li>
           <li><strong>Fecha:</strong> {fecha ? new Date(fecha).toLocaleString() : '—'}</li>
         </ul>
       </div>
 
-      {error && <p className="error-text">{error}</p>}
+      {error && <p className="error-text" role="alert">{error}</p>}
 
       <button type="submit" className="reserva-btn" disabled={loading}>
         {loading ? 'Reservando...' : 'Confirmar Reserva'}

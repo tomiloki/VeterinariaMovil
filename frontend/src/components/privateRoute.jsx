@@ -1,22 +1,26 @@
-// frontend/src/components/PrivateRoute.jsx
+// src/components/privateRoute.jsx
 import React from 'react';
 import { Navigate } from 'react-router-dom';
 import { useAuth } from '../contexts/authContext';
 
-export default function PrivateRoute({ children, roles }) {
-  const { user, loading } = useAuth();
+export default function PrivateRoute({ roles = [], children }) {
+  const { user, loadingAuth } = useAuth();
 
-  // Mientras auth se inicializa, no mostramos nada
-  if (loading) return null;
+  // Mostrar spinner mientras se verifica la sesión
+  if (loadingAuth) {
+    return <div className="loading-spinner">Cargando...</div>;
+  }
 
-  // Si no hay user → login
-  if (!user) return <Navigate to="/login" replace />;
+  // Si no hay usuario, redirigimos al login
+  if (!user) {
+    return <Navigate to="/login" replace />;
+  }
 
-  // Si roles definidos y el rol del user no está permitido → home
-  if (roles && !roles.includes(user.rol)) {
+  // Si hay roles definidos y el usuario no tiene permiso, redirigimos al home
+  if (roles.length > 0 && !roles.includes(user.rol)) {
     return <Navigate to="/" replace />;
   }
 
-  // OK, renderizamos la ruta protegida
-  return children;
+  // Finalmente, renderizamos el contenido envuelto
+  return <>{children}</>;
 }

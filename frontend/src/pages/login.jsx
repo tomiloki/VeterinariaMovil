@@ -1,46 +1,51 @@
+// src/pages/login.jsx
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/authContext';
-import '../styles/login.css'; // Asegúrate de tenerlo
+import '../styles/login.css';
 
 export default function Login() {
-  const { login } = useAuth(); //
+  const { login } = useAuth();
   const [form, setForm] = useState({ username: '', password: '' });
-  const [error, setError] = useState('');
-  const [touched, setTouched] = useState({});
+  const [errors, setErrors] = useState({});
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
   const [showPassword, setShowPassword] = useState(false);
 
   const handleChange = e => {
-    setForm({ ...form, [e.target.name]: e.target.value });
-    setError('');
-  };
-
-  const handleBlur = e => {
-    setTouched({ ...touched, [e.target.name]: true });
+    const { name, value } = e.target;
+    setForm(prev => ({ ...prev, [name]: value }));
+    setErrors(prev => ({ ...prev, [name]: '' }));
   };
 
   const validate = () => {
-    let msg = '';
-    if (!form.username) msg = 'Debes ingresar tu usuario.';
-    else if (!form.password) msg = 'Debes ingresar tu contraseña.';
-    return msg;
+    const errs = {};
+    if (!form.username.trim()) errs.username = 'Debes ingresar tu usuario.';
+    if (!form.password) errs.password = 'Debes ingresar tu contraseña.';
+    return errs;
   };
 
   const handleSubmit = async e => {
     e.preventDefault();
-    const msg = validate();
-    if (msg) return setError(msg);
+    console.log('🔐 Intentando login con:', form);
+    const fieldErrors = validate();
+    if (Object.keys(fieldErrors).length) {
+      console.log('❌ Errores de validación local:', fieldErrors);
+      setErrors(fieldErrors);
+      return;
+    }
     setLoading(true);
     try {
       await login(form.username, form.password);
-      setError('');
+      console.log('✅ Login exitoso, navegando a /');
       navigate('/');
     } catch (err) {
-      setError('No se pudo conectar al servidor.');
+      console.error('🚨 Error en login:', err);
+      setErrors({ form: err.message });
+    } finally {
+      setLoading(false);
+      console.log('⏹️ handleSubmit finalizado, loading=false');
     }
-    setLoading(false);
   };
 
   return (
@@ -56,11 +61,11 @@ export default function Login() {
             id="username"
             value={form.username}
             onChange={handleChange}
-            onBlur={handleBlur}
-            className={!form.username && touched.username ? 'error-input' : ''}
             placeholder="Tu nombre de usuario"
             autoFocus
+            className={errors.username ? 'error-input' : ''}
           />
+          {errors.username && <div className="error-msg">{errors.username}</div>}
         </div>
 
         <div className="input-group">
@@ -72,36 +77,29 @@ export default function Login() {
               id="password"
               value={form.password}
               onChange={handleChange}
-              onBlur={handleBlur}
-              className={!form.password && touched.password ? 'error-input' : ''}
               placeholder="Tu contraseña"
               autoComplete="current-password"
+              className={errors.password ? 'error-input' : ''}
             />
             <span
               className="eye-icon"
               tabIndex={0}
               onClick={() => setShowPassword(v => !v)}
             >
-              {/* Minimalista SVG */}
-              <svg width="22" height="22" viewBox="0 0 20 20" fill="none">
-                <ellipse cx="10" cy="10" rx="8" ry="4" stroke="#888" strokeWidth="1.7" fill="none"/>
-                <circle cx="10" cy="10" r="1.6" fill="#888" />
-                {showPassword ? (
-                  <line x1="5" y1="15" x2="15" y2="5" stroke="#888" strokeWidth="1.6" />
-                ) : null}
-              </svg>
+              {/* SVG icon */}👁️
             </span>
           </div>
+          {errors.password && <div className="error-msg">{errors.password}</div>}
         </div>
 
-        {error && <div className="error-msg">{error}</div>}
+        {errors.form && <div className="error-msg form-error">{errors.form}</div>}
 
         <button className="login-btn" type="submit" disabled={loading}>
           {loading ? 'Ingresando...' : 'Entrar'}
         </button>
 
         <div className="register-link">
-          ¿No tienes cuenta? <a href="/register">Regístrate aquí</a>
+          ¿No tienes cuenta? <Link to="/register">Regístrate aquí</Link>
         </div>
       </form>
     </div>

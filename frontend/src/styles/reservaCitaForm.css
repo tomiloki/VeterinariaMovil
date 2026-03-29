@@ -1,29 +1,40 @@
-/* frontend/src/styles/reservaCitaForm.css */
-.reserva-page {                                /* envolver el form con este div */
-  min-height: 100vh;                           /* ocupa toda la pantalla */
-  padding: 2rem 0;                             /* separación arriba/abajo */
-  display: flex;                               /* centra el form */
-  align-items: center;
-  justify-content: center;
-  background: linear-gradient(90deg, #ffb703 60%, #fb8500 100%);  /* fondo warm */
+/* src/styles/reservaCitaForm.css */
+
+/* Paleta “Warm & Friendly” compartida */
+:root {
+  --color-bg-page:    #E0F7FA; /* celeste muy claro */
+  --color-form-bg:    #FFFFFF; /* blanco */
+  --color-accent:     #FF8C94; /* rosa pastel */
+  --color-text-dark:  #37474F; /* gris oscuro suave */
+  --color-border:     #AACFD0; /* turquesa suave */
+  --color-hover:      #FFD3B6; /* durazno claro */
 }
 
+/* Fondo de toda la página de reserva */
+body {
+  background-color: var(--color-bg-page);
+}
+
+/* Centrar el formulario y limitar su ancho */
 .reserva-form {
-  background: #fff;
+  background-color: var(--color-form-bg);
   padding: 2rem;
   border-radius: 0.8rem;
-  box-shadow: 0 4px 20px rgba(2,48,71,0.07);
+  box-shadow: 0 4px 20px rgba(0, 48, 71, 0.07);
   max-width: 480px;
-  margin: 1rem auto;
+  width: 100%;
+  margin: 2rem auto;            /* centrar horizontalmente y separar del top */
 }
 
+/* Título */
 .reserva-form h2 {
   margin-bottom: 1.5rem;
-  color: #023047;
+  color: var(--color-text-dark);
   font-size: 1.6rem;
   text-align: center;
 }
 
+/* Grupo de campo */
 .field-group {
   margin-bottom: 1.25rem;
   display: flex;
@@ -32,91 +43,85 @@
 .field-group label {
   margin-bottom: 0.5rem;
   font-weight: 600;
-  color: #023047;
+  color: var(--color-text-dark);
 }
 .field-group input,
 .field-group select,
 .field-group textarea {
   padding: 0.65rem 0.9rem;
-  border: 1.5px solid #ffb703;
+  border: 1.5px solid var(--color-border);
   border-radius: 0.5rem;
   font-size: 1rem;
-  transition: border-color 0.2s, background 0.2s;
   color: #6b7280;
-  background: #fff;          
+  background: #fff;
+  transition: border-color 0.2s, background 0.2s;
 }
 .field-group input:focus,
 .field-group select:focus,
 .field-group textarea:focus {
   outline: none;
-  border-color: #fb8500;
-  background: #fff8e1;
-  color: #1f2937
+  border-color: var(--color-accent);
+  background: var(--color-hover);
+  color: var(--color-text-dark);
 }
 
+/* Estilos de error */
 .input-error {
   border-color: #e63946 !important;
   background: #fff1f1;
 }
-
 .error-text {
   color: #e63946;
   font-size: 0.875rem;
   margin-top: 0.3rem;
 }
 
+/* Botón de enviar */
 .reserva-btn {
   width: 100%;
   padding: 0.75rem;
-  background: linear-gradient(90deg, #ffb703 60%, #fb8500 100%);
-  color: #023047;
+  background-color: var(--color-accent);
+  color: #fff;
   font-weight: bold;
   border: none;
   border-radius: 1rem;
   font-size: 1.1rem;
   cursor: pointer;
-  transition: background 0.18s, color 0.18s;
-  box-shadow: 0 2px 12px rgba(251,133,0,0.3);
+  transition: background-color 0.2s;
+  box-shadow: 0 2px 12px rgba(251, 133, 0, 0.3);
 }
 .reserva-btn:hover {
-  background: linear-gradient(90deg, #fb8500 40%, #ffb703 100%);
-  color: #fff;
+  background-color: #FFAAA5;
 }
 
-/* 1. Radio tipo de cita */
+/* Radio tipo de cita */
+.tipo-group {
+  margin-bottom: 1.5rem;
+}
+.tipo-group label {
+  font-weight: 600;
+  color: var(--color-text-dark);
+}
 .tipo-group .radio-group {
   display: flex;
   gap: 1.5rem;
   margin-top: 0.5rem;
 }
-.tipo-group .radio-group label {
-  font-weight: 600;
-  color: #023047;
-}
 .tipo-group input[type="radio"] {
   margin-right: 0.4rem;
 }
 
-/* 2. Dirección de usuario (movil) */
-.user-address {
-  padding: 0.6rem 0.9rem;
-  background: #f0f0f0;
-  border-radius: 0.5rem;
-  color: #023047;
-  font-style: italic;
-}
-
-/* 3. Detalle dinámico */
+/* Detalle dinámico */
 .detail-group {
-  background: #fff8e1;      /* suave warm */
+  background: var(--color-form-bg);
   padding: 1rem;
   border-radius: 0.6rem;
   margin: 1rem 0;
-  color: #023047;
+  border: 1px dashed var(--color-border);
 }
 .detail-group h3 {
   margin-bottom: 0.6rem;
-  color: #023047;
+  color: var(--color-text-dark);
 }
 .detail-group ul {
   list-style: none;
@@ -124,4 +129,17 @@
 }
 .detail-group li {
   margin-bottom: 0.3rem;
+  color: var(--color-text-dark);
+}
+
+/* Responsive */
+@media (max-width: 480px) {
+  .reserva-form {
+    padding: 1.5rem;
+    margin: 1rem auto;
+  }
+  .reserva-btn {
+    font-size: 1rem;
+    padding: 0.65rem;
+  }
 }

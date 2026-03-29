@@ -1,15 +1,37 @@
+// frontend/src/pages/farmacia.jsx
 import React, { useEffect, useState } from 'react';
-import api from '../services/api';
+import { useAuth } from '../contexts/authContext';
 import { useCart } from '../contexts/cartContext';
 import '../styles/farmacia.css';
 
 export default function Farmacia() {
   const [medicamentos, setMedicamentos] = useState([]);
-  const { addItem } = useCart();
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const { fetchWithAuth } = useAuth();
+  const { addToCart } = useCart();
 
   useEffect(() => {
-    api.get('medicamentos/').then(res => setMedicamentos(res.data));
-  }, []);
+    setLoading(true);
+    fetchWithAuth('/medicamentos/')
+      .then(res => {
+        setMedicamentos(res.data);
+        setLoading(false);
+      })
+      .catch(err => {
+        console.error('Error al cargar el catálogo de farmacia:', err);
+        setError('No se pudo cargar el catálogo. Intenta de nuevo más tarde.');
+        setLoading(false);
+      });
+  }, [fetchWithAuth]);
+
+  if (loading) {
+    return <div className="loading-spinner">Cargando medicamentos...</div>;
+  }
+
+  if (error) {
+    return <div className="error-message">{error}</div>;
+  }
 
   return (
     <div className="farmacia-container">
@@ -19,10 +41,17 @@ export default function Farmacia() {
           <div className="med-card" key={med.id}>
             <h3>{med.nombre}</h3>
             <p>{med.descripcion}</p>
-            <p><b>Precio:</b> ${med.precio}</p>
-            <p><b>Stock:</b> {med.stock}</p>
-            <button onClick={() => addItem(med)}>
-              Agregar al carrito
+            <p>
+              <strong>Precio:</strong> ${med.precio.toFixed(2)}
+            </p>
+            <p>
+              <strong>Stock:</strong> {med.stock}
+            </p>
+            <button
+              onClick={() => addToCart(med.id, 1)}
+              disabled={med.stock === 0}
+            >
+              {med.stock === 0 ? 'Agotado' : 'Agregar al carrito'}
             </button>
           </div>
         ))}

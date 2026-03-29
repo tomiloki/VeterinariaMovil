@@ -1,199 +1,77 @@
+/* ---------- REGISTER (paleta menta-celeste) ---------- */
+:root {
+  --grad-1:          #E3F7FB;
+  --grad-2:          #A8E6CF;
+  --color-form-bg:   #FFFFFF;
+  --color-accent:    #FFA7B5;
+  --color-text-dark: #37474F;
+  --color-border:    #A8E6CF;
+  --color-border-dk: #6ED7B2;
+  --color-error:     #E63946;
+}
+
 .register-bg {
-  padding-top: 30px;
-  padding-bottom: 30px;
   min-height: 100vh;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: linear-gradient(120deg, #ffb703 0%, #fb8500 100%);
+  display: flex; align-items: flex-start; justify-content: center;
+  padding: 40px 0;
+  background: linear-gradient(180deg, var(--grad-1) 0%, var(--grad-2) 100%);
 }
 
 .register-form {
-  background: #fff;
-  padding: 2.7rem 2.5rem 2.5rem 2.5rem;
-  border-radius: 1.2rem;
-  box-shadow: 0 6px 36px 0 rgba(2,48,71,0.17);
-  width: 100%;
-  max-width: 520px;
-  min-width: 350px;
-  display: flex;
-  flex-direction: column;
-  gap: 1.1rem;
-  border: none;
+  background: var(--color-form-bg);
+  padding: 2.6rem 2.2rem;
+  border-radius: 1rem;
+  box-shadow: 0 6px 26px rgba(55, 71, 79, 0.12);
+  width: 100%; max-width: 520px;
+  display: flex; flex-direction: column; gap: 1rem;
+  font-family: Helvetica, Arial, sans-serif;
 }
 
 .register-form h2 {
-  text-align: center;
-  color: #023047;
-  margin-bottom: 1.1rem;
-  font-size: 2rem;
-  font-weight: bold;
+  text-align: center; color: var(--color-text-dark);
+  font-size: 2rem; margin-bottom: .4rem;
 }
 
-.input-group {
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  gap: 1.2rem;
-  margin-bottom: 0.15rem;
-  width: 100%;
-}
-
-.label-row {
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  min-width: 180px;
-  max-width: 220px;
-  justify-content: flex-end;
-  font-size: 1rem;
-}
-
-.label-text {
-  color: #023047;
-  font-weight: 600;
-  margin-right: 0.3rem;
-  min-width: 115px;
-  text-align: right;
-}
-
-.hint-container { position: relative; }
-.hint-tooltip {
-  position: absolute;
-  left: 120%;
-  top: 50%;
-  transform: translateY(-50%);
-  background: #fff3cd;
-  color: #212529;
-  border: 1px solid #ffe082;
-  border-radius: 7px;
-  padding: 8px 14px;
-  min-width: 150px;
-  max-width: 240px;
-  font-size: 0.97em;
-  font-weight: 500;
-  z-index: 11;
-  box-shadow: 0 3px 12px 0 #e5e5e5;
-  white-space: pre-line;
-}
-
-.hint-tooltip {
-  position: absolute;
-  left: 120%;
-  top: 50%;
-  transform: translateY(-50%);
-  background: #fff3cd;
-  color: #212529;
-  border: 1px solid #ffe082;
-  border-radius: 7px;
-  padding: 8px 14px;
-  min-width: 150px;
-  max-width: 240px;
-  font-size: 0.97em;
-  font-weight: 500;
-  z-index: 11;
-  box-shadow: 0 3px 12px 0 #e5e5e5;
-  white-space: pre-line;
-}
-.hint-icon {
-  background: #ffb703;
-  color: #fff;
-  border-radius: 50%;
-  width: 20px; height: 20px;
-  display: inline-flex;
-  justify-content: center; align-items: center;
-  font-size: 1rem;
-  cursor: pointer;
-  border: 1.3px solid #fb8500;
-  box-shadow: 0 1px 5px #f5e4b1b6;
-  transition: background 0.18s;
-}
-
-.hint-icon:hover, .hint-icon:focus {
-  background: #fb8500;
-  color: #fff;
-}
-
+.input-group { display: flex; flex-direction: column; gap: .35rem; }
+.input-group label { color: var(--color-text-dark); font-weight: 600; }
 .input-group input {
-  flex: 1;
-  padding: 0.7rem 0.8rem;
-  border: 1.7px solid #ffb703;
-  border-radius: 0.6rem;
-  background: #f8f8f8;
-  color: #023047;
-  font-size: 1rem;
-  transition: border-color 0.2s, background 0.2s;
-  text-align: left;
-  margin-left: 0.1rem;
+  padding: .7rem .8rem; border: 1.5px solid var(--color-border);
+  border-radius: .55rem; background: #F7FCFD; font-size: 1rem;
+  transition: border-color .18s; color: var(--color-text-dark);
 }
-
 .input-group input:focus {
-  outline: none;
-  border-color: #fb8500;
-  background: #fff8e1;
+  outline: none; border-color: var(--color-border-dk); background: #ECFAF4;
 }
 
-.error-input {
-  border-color: #e63946 !important;
-  background: #fff1f1;
+.input-eye-container { position: relative; }
+.eye-icon {
+  position: absolute; right: 12px; top: 50%; transform: translateY(-50%);
+  cursor: pointer; font-size: 1.05rem; opacity: .55; transition: opacity .18s;
+}
+.eye-icon:hover { opacity: 1; }
+
+.error-input { border-color: var(--color-error)!important; background: #FFF1F1; }
+.error-msg   {
+  background: var(--color-error); color: #fff;
+  padding: .5rem .9rem; border-radius: .5rem;
+  font-size: .88rem; text-align: center;
 }
 
 .register-btn {
-  background: #ffb703;
-  color: #023047;
-  border: none;
-  border-radius: 0.7rem;
-  padding: 0.9rem 0;
-  font-size: 1.15rem;
-  font-weight: bold;
-  cursor: pointer;
-  transition: background 0.18s, color 0.18s;
-  margin-top: 0.7rem;
+  background: var(--color-accent); color: #fff;
+  border: none; border-radius: .8rem;
+  padding: .8rem 0; font-size: 1.05rem; font-weight: 700;
+  cursor: pointer; transition: filter .18s;
+  box-shadow: 0 2px 12px rgba(255, 167, 181, .45);
 }
+.register-btn:hover { filter: brightness(1.05); }
 
-.register-btn:hover, .register-btn:focus {
-  background: #fb8500;
-  color: #fff;
-}
-
-.login-link {
-  margin-top: 0.8rem;
-  text-align: center;
-  color: #023047;
-  font-size: 1rem;
-}
-
+.login-link { margin-top: .7rem; text-align: center; color: var(--color-text-dark); }
 .login-link a {
-  color: #fb8500;
-  text-decoration: underline;
-  font-weight: bold;
-  transition: color 0.2s;
+  color: var(--color-accent); text-decoration: underline; font-weight: 600;
 }
+.login-link a:hover { filter: brightness(1.1); }
 
-.login-link a:hover {
-  color: #ffb703;
-}
-
-.input-eye-container {
-  position: relative;
-  width: 100%;
-  display: flex;
-  align-items: center;
-}
-.input-eye-container input {
-  flex: 1;
-}
-.eye-icon {
-  position: absolute;
-  right: 12px;
-  top: 50%;
-  transform: translateY(-50%);
-  cursor: pointer;
-  user-select: none;
-  transition: opacity 0.15s;
-  opacity: 0.6;
-}
-.eye-icon:hover,
-.eye-icon:focus {
-  opacity: 1;
+@media (max-width: 420px) {
+  .register-form { padding: 2rem 1.6rem; }
 }

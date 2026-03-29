@@ -1,107 +1,96 @@
+/* ---------- LOGIN (paleta menta-celeste) ---------- */
+:root {
+  --grad-1:          #E3F7FB;   /* celeste muy claro */
+  --grad-2:          #A8E6CF;   /* verde menta */
+  --color-form-bg:   #FFFFFF;
+  --color-accent:    #FFA7B5;   /* rosa pastel botones */
+  --color-text-dark: #37474F;
+  --color-border:    #A8E6CF;
+  --color-border-dk: #6ED7B2;
+  --color-error:     #E63946;
+}
+
+/* Fondo degradado vertical */
 .login-bg {
   min-height: 100vh;
   display: flex;
   align-items: center;
   justify-content: center;
-  background: linear-gradient(120deg, #ffb703 0%, #fb8500 100%);
+  background: linear-gradient(180deg, var(--grad-1) 0%, var(--grad-2) 100%);
 }
 
+/* Tarjeta */
 .login-form {
-  background: #fff;
-  padding: 2.5rem 2rem;
-  border-radius: 1.2rem;
-  box-shadow: 0 6px 36px 0 rgba(2,48,71,0.17);
-  min-width: 320px;
+  background: var(--color-form-bg);
+  padding: 2.4rem 2rem;
+  border-radius: 1rem;
+  box-shadow: 0 6px 26px rgba(55, 71, 79, 0.12);
   width: 100%;
   max-width: 360px;
   display: flex;
   flex-direction: column;
-  gap: 1.1rem;
-  border: none;
+  gap: 1rem;
+  font-family: Helvetica, Arial, sans-serif;
 }
 
 .login-form h2 {
   text-align: center;
-  color: #023047;
-  margin-bottom: 1.2rem;
-  font-size: 2rem;
-  font-weight: bold;
+  color: var(--color-text-dark);
+  font-size: 1.9rem;
+  margin-bottom: 0.4rem;
 }
 
-.input-group {
-  display: flex;
-  flex-direction: column;
-  gap: 0.4rem;
-}
-
-.input-group label {
-  color: #023047;
-  font-weight: 600;
-}
-
+/* Campo */
+.input-group { display: flex; flex-direction: column; gap: .35rem; }
+.input-group label { color: var(--color-text-dark); font-weight: 600; }
 .input-group input {
-  padding: 0.7rem;
-  border: 1.5px solid #ffb703;
-  border-radius: 0.6rem;
-  background: #f8f8f8;
-  color: #023047;
+  padding: .7rem .8rem;
+  border: 1.5px solid var(--color-border);
+  border-radius: .55rem;
+  background: #F7FCFD;
   font-size: 1rem;
-  transition: border-color 0.2s;
+  transition: border-color .18s;
+  color: var(--color-text-dark);
 }
-
 .input-group input:focus {
   outline: none;
-  border-color: #fb8500;
-  background: #fff8e1;
+  border-color: var(--color-border-dk);
+  background: #ECFAF4;
 }
 
-.error-input {
-  border-color: #e63946 !important;
-  background: #fff1f1;
+/* Ojo */
+.input-eye-container { position: relative; }
+.eye-icon {
+  position: absolute; right: 12px; top: 50%;
+  transform: translateY(-50%);
+  cursor: pointer; user-select: none;
+  font-size: 1.05rem; opacity: .55; transition: opacity .18s;
+}
+.eye-icon:hover { opacity: 1; }
+
+/* Errores */
+.error-input { border-color: var(--color-error)!important; background: #FFF1F1; }
+.error-msg   {
+  background: var(--color-error); color: #fff;
+  padding: .5rem .9rem; border-radius: .5rem;
+  font-size: .88rem; text-align: center;
 }
 
-.error-msg {
-  background: #e63946;
-  color: #fff;
-  border-radius: 0.5rem;
-  padding: 0.7rem 1rem;
-  text-align: center;
-  font-weight: 600;
-  margin-top: -0.4rem;
-  margin-bottom: 0.2rem;
-}
-
+/* Botón */
 .login-btn {
-  background: #ffb703;
-  color: #023047;
-  border: none;
-  border-radius: 0.7rem;
-  padding: 0.8rem 0;
-  font-size: 1.15rem;
-  font-weight: bold;
-  cursor: pointer;
-  transition: background 0.18s, color 0.18s;
-  margin-top: 0.7rem;
+  background: var(--color-accent);
+  color: #fff; border: none; border-radius: .8rem;
+  padding: .75rem 0; font-size: 1.05rem; font-weight: 700;
+  cursor: pointer; transition: filter .18s;
+  box-shadow: 0 2px 12px rgba(255, 167, 181, .45);
 }
+.login-btn:hover { filter: brightness(1.05); }
 
-.login-btn:hover, .login-btn:focus {
-  background: #fb8500;
-  color: #fff;
-}
-
+/* Link registro */
 .register-link {
-  margin-top: 0.9rem;
-  text-align: center;
-  color: #023047;
+  margin-top: .8rem; text-align: center; color: var(--color-text-dark);
 }
-
 .register-link a {
-  color: #fb8500;
-  text-decoration: underline;
-  font-weight: bold;
-  transition: color 0.2s;
+  color: var(--color-accent); text-decoration: underline; font-weight: 600;
 }
-
-.register-link a:hover {
-  color: #ffb703;
-}
+.register-link a:hover { filter: brightness(1.1); }
